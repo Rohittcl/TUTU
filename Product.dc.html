@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>{{ pageTitle }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#fff}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#fff;min-height:100vh">
+  <dc-import name="Header" active-page="product" hint-size="100%,72px"></dc-import>
+
+  <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:640px;margin:80px auto;text-align:center">
+      <div style="font-size:20px;font-weight:800;color:#1E1B4B;margin-bottom:10px">Product not found</div>
+      <a href="Home.dc.html" style="color:#4338CA;font-weight:700;text-decoration:none">Back to home →</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ found }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1280px;margin:0 auto;padding:24px 24px 64px">
+    <div style="font-size:12.5px;color:#8B88A3;font-weight:600;margin-bottom:16px">Home / {{ categoryName }} / {{ title }}</div>
+
+    <div style="display:grid;grid-template-columns:380px 1fr;gap:36px;margin-bottom:44px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="height:320px;border-radius:18px;background:{{ imageBg }};overflow:hidden">
+          <img src="{{ mainImageUrl }}" alt="{{ title }}" style="width:100%;height:100%;object-fit:cover;display:block" />
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+          <sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="4">
+            <div style="height:56px;border-radius:10px;overflow:hidden"><img src="{{ t.url }}" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <span style="font-size:12.5px;font-weight:700;color:#4338CA;background:#EEF0FB;padding:4px 10px;border-radius:8px">{{ brand }}</span>
+          <h1 style="font-size:26px;font-weight:800;color:#1E1B4B;margin:12px 0 6px;line-height:1.3">{{ title }}</h1>
+          <div style="display:flex;align-items:center;gap:8px">
+            <dc-import name="Icon" icon-name="{{ 'star' }}" size="{{ 14 }}" color="{{ '#F59E0B' }}" hint-size="14,14"></dc-import>
+            <span style="font-size:13.5px;font-weight:700;color:#1E1B4B">{{ rating }}</span>
+            <span style="font-size:13px;color:#8B88A3">({{ reviews }} reviews)</span>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#EEF0FB,#F8F8FC);border:1.5px solid #C7CBF5;border-radius:16px;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:16px">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <span style="font-size:11px;font-weight:800;color:#16A34A;background:#EAF7EE;padding:3px 8px;border-radius:6px">BEST PRICE · {{ bestStoreName }}</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:10px">
+              <span style="font-size:32px;font-weight:800;color:#1E1B4B">{{ bestPriceLabel }}</span>
+              <span style="font-size:15px;color:#B0AECB;text-decoration:line-through">{{ bestOriginalLabel }}</span>
+              <span style="font-size:14px;font-weight:800;color:#16A34A">{{ bestDiscountLabel }}</span>
+            </div>
+            <div style="font-size:12.5px;color:#5C5A7D;margin-top:6px">{{ bestDeliveryLabel }} · {{ bestReturnPolicy }}</div>
+          </div>
+          <a href="{{ bestBuyHref }}" target="_blank" rel="noopener" style="text-decoration:none;background:#4338CA;color:#fff;font:800 14px 'Manrope',sans-serif;padding:14px 26px;border-radius:12px;white-space:nowrap">Buy Now →</a>
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <button onClick="{{ onToggleWishlist }}" style="display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #DCDBF0;border-radius:10px;padding:10px 16px;cursor:pointer;font:700 13px 'Manrope',sans-serif;color:#1E1B4B">
+            <dc-import name="Icon" icon-name="{{ heartIcon }}" size="{{ 15 }}" color="{{ heartColor }}" hint-size="15,15"></dc-import>
+            {{ wishlistLabel }}
+          </button>
+          <a href="#price-alert" style="display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #DCDBF0;border-radius:10px;padding:10px 16px;cursor:pointer;font:700 13px 'Manrope',sans-serif;color:#1E1B4B;text-decoration:none">
+            <dc-import name="Icon" icon-name="{{ 'bell' }}" size="{{ 15 }}" color="{{ '#4338CA' }}" hint-size="15,15"></dc-import>
+            Set price alert
+          </a>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px 20px;margin-top:6px">
+          <sc-for list="{{ specRows }}" as="sp" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #F0F0F5">
+              <span style="font-size:12.5px;color:#8B88A3;font-weight:600">{{ sp.key }}</span>
+              <span style="font-size:12.5px;color:#27253F;font-weight:700">{{ sp.val }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <section style="margin-bottom:48px">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 16px">Store-wise price comparison</h2>
+      <div style="border:1px solid #ECEBF5;border-radius:16px;overflow:hidden">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#F8F8FC">
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Store</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Price</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Discount</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Coupon</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Bank offer</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Delivery</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Return / Warranty</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Rating</th>
+              <th style="text-align:left;padding:12px 16px;font-size:11.5px;font-weight:800;color:#8B88A3;text-transform:uppercase">Updated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ priceRows }}" as="row" hint-placeholder-count="4">
+              <tr style="border-top:1px solid #F0F0F5">
+                <td style="padding:14px 16px">
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <div style="width:28px;height:28px;border-radius:8px;background:{{ row.color }};color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px 'Manrope',sans-serif">{{ row.initial }}</div>
+                    <span style="font-size:13px;font-weight:700;color:#1E1B4B">{{ row.storeName }}</span>
+                    <sc-if value="{{ row.isBest }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;font-weight:800;color:#16A34A;background:#EAF7EE;padding:2px 6px;border-radius:5px">BEST</span></sc-if>
+                  </div>
+                </td>
+                <td style="padding:14px 16px">
+                  <div style="font-size:14px;font-weight:800;color:#1E1B4B">{{ row.priceLabel }}</div>
+                  <div style="font-size:11.5px;color:#B0AECB;text-decoration:line-through">{{ row.originalLabel }}</div>
+                </td>
+                <td style="padding:14px 16px;font-size:13px;font-weight:700;color:#16A34A">{{ row.discountLabel }}</td>
+                <td style="padding:14px 16px;font-size:12px;color:#B45309;font-weight:700">{{ row.couponLabel }}</td>
+                <td style="padding:14px 16px;font-size:12px;color:#1D4ED8;font-weight:700;max-width:160px">{{ row.bankOfferLabel }}</td>
+                <td style="padding:14px 16px;font-size:12.5px;color:#3E3C5C">{{ row.deliveryLabel }}</td>
+                <td style="padding:14px 16px;font-size:12px;color:#3E3C5C">{{ row.returnWarrantyLabel }}</td>
+                <td style="padding:14px 16px;font-size:12.5px;color:#3E3C5C">{{ row.sellerRatingLabel }}</td>
+                <td style="padding:14px 16px;font-size:12px;color:#8B88A3">{{ row.lastUpdated }}</td>
+                <td style="padding:14px 16px"><a href="{{ row.buyHref }}" target="_blank" rel="noopener" style="text-decoration:none;background:#1E1B4B;color:#fff;font:700 12px 'Manrope',sans-serif;padding:8px 14px;border-radius:8px;white-space:nowrap">Buy Now</a></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-bottom:48px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px">
+      <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:24px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+          <h2 style="font-size:18px;font-weight:800;color:#1E1B4B;margin:0">Price history</h2>
+          <div style="display:flex;gap:6px">
+            <sc-for list="{{ rangeOptions }}" as="rg" hint-placeholder-count="4">
+              <button onClick="{{ rg.onClick }}" style="border:1px solid {{ rg.borderColor }};background:{{ rg.bg }};color:{{ rg.color }};font:700 12px 'Manrope',sans-serif;padding:6px 12px;border-radius:8px;cursor:pointer">{{ rg.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <svg viewBox="0 0 560 200" width="100%" height="200" style="display:block">
+          <polygon points="{{ chartAreaPoints }}" fill="#EEF0FB"></polygon>
+          <polyline points="{{ chartLinePoints }}" fill="none" stroke="#4338CA" stroke-width="2.5"></polyline>
+          <circle cx="{{ chartDotX }}" cy="{{ chartDotY }}" r="5" fill="#4338CA"></circle>
+        </svg>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px">
+          <div><div style="font-size:11px;color:#8B88A3;font-weight:700">LOWEST</div><div style="font-size:15px;font-weight:800;color:#1E1B4B">{{ chartLow }}</div></div>
+          <div><div style="font-size:11px;color:#8B88A3;font-weight:700">HIGHEST</div><div style="font-size:15px;font-weight:800;color:#1E1B4B">{{ chartHigh }}</div></div>
+          <div><div style="font-size:11px;color:#8B88A3;font-weight:700">AVERAGE</div><div style="font-size:15px;font-weight:800;color:#1E1B4B">{{ chartAvg }}</div></div>
+          <div><div style="font-size:11px;color:#8B88A3;font-weight:700">CURRENT</div><div style="font-size:15px;font-weight:800;color:#4338CA">{{ chartCurrent }}</div></div>
+        </div>
+        <div style="margin-top:14px;padding:12px 14px;border-radius:10px;background:{{ goodTimeBg }};display:flex;align-items:center;gap:9px">
+          <dc-import name="Icon" icon-name="{{ goodTimeIcon }}" size="{{ 16 }}" color="{{ goodTimeColor }}" hint-size="16,16"></dc-import>
+          <span style="font-size:13px;font-weight:700;color:{{ goodTimeColor }}">{{ goodTimeText }}</span>
+        </div>
+      </div>
+
+      <div id="price-alert" style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px">
+        <h2 style="font-size:18px;font-weight:800;color:#1E1B4B;margin:0">Set a price alert</h2>
+        <p style="font-size:12.5px;color:#8B88A3;margin:0;line-height:1.6">"Notify me when {{ shortTitle }} drops below {{ alertCurrencySymbol }}{{ alertTargetPreview }}."</p>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#27253F;margin-bottom:6px">Target price ({{ alertCurrencySymbol }})</div>
+          <input type="number" value="{{ targetPrice }}" onChange="{{ onTargetPriceChange }}" placeholder="{{ targetPricePlaceholder }}" style="width:100%;box-sizing:border-box;border:1px solid #DCDBF0;border-radius:10px;padding:10px 12px;font-size:14px;outline:none" />
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#27253F;margin-bottom:8px">Notify me via</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ channelOptions }}" as="ch" hint-placeholder-count="4">
+              <label style="display:flex;align-items:center;gap:9px;cursor:pointer">
+                <input type="checkbox" checked="{{ ch.checked }}" onChange="{{ ch.onChange }}" />
+                <dc-import name="Icon" icon-name="{{ ch.icon }}" size="{{ 14 }}" color="{{ '#4338CA' }}" hint-size="14,14"></dc-import>
+                <span style="font-size:13px;color:#3E3C5C;font-weight:600">{{ ch.label }}</span>
+              </label>
+            </sc-for>
+          </div>
+        </div>
+        <button onClick="{{ onCreateAlert }}" style="background:#4338CA;color:#fff;border:none;border-radius:10px;padding:12px 0;font:800 13.5px 'Manrope',sans-serif;cursor:pointer">{{ alertButtonLabel }}</button>
+      </div>
+    </section>
+
+    <section style="margin-bottom:48px">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 16px">Similar products</h2>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <sc-for list="{{ similarProducts }}" as="p" hint-placeholder-count="4">
+          <dc-import name="ProductCard" product="{{ p }}" wishlisted="{{ p.wishlisted }}" on-toggle-wishlist="{{ onToggleWishlist }}" hint-size="100%,340px"></dc-import>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <dc-import name="Footer" hint-size="100%,300px"></dc-import>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    data: null, product: null, wishlist: [], days: 30,
+    targetPrice: '', channels: ['email'], alertCreated: false,
+  };
+
+  async componentDidMount() {
+    const data = await import('./data.js');
+    this.data = data;
+    const p = new URLSearchParams(window.location.search);
+    const slug = p.get('slug');
+    const product = data.getProductBySlug(slug);
+    const app = data.getAppState();
+    this.setState({ data, product, wishlist: app.wishlist });
+  }
+
+  onToggleWishlist = () => { if (this.data && this.state.product) this.setState({ wishlist: this.data.toggleWishlist(this.state.product.id) }); };
+  setDays = (d) => this.setState({ days: d });
+  onTargetPriceChange = (e) => this.setState({ targetPrice: e.target.value });
+  toggleChannel = (c) => this.setState(s => ({ channels: s.channels.includes(c) ? s.channels.filter(x => x !== c) : [...s.channels, c] }));
+  onCreateAlert = () => {
+    const { data, product, targetPrice, channels } = this.state;
+    if (!data || !product || !targetPrice) return;
+    data.addAlert(product.id, Number(targetPrice), channels);
+    this.setState({ alertCreated: true });
+  };
+
+  renderVals() {
+    const { data, product, wishlist, days, targetPrice, channels, alertCreated } = this.state;
+    if (!data) return { found: false, notFound: false };
+    if (!product) return { found: false, notFound: true };
+
+    const fmt = (n) => data.formatPrice(n, product.country);
+    const bp = product.bestPrice;
+    const hist = data.getPriceHistory(product.id, days);
+    const w = 560, h = 200, pad = 10;
+    const vals = hist.series.map(s => s.price);
+    const min = Math.min(...vals), max = Math.max(...vals);
+    const pts = hist.series.map((s, i) => {
+      const x = pad + (i / (hist.series.length - 1)) * (w - pad * 2);
+      const y = h - pad - ((s.price - min) / (max - min || 1)) * (h - pad * 2);
+      return [x, y];
+    });
+    const chartLinePoints = pts.map(p => p.join(',')).join(' ');
+    const chartAreaPoints = `${pad},${h - pad} ` + pts.map(p => p.join(',')).join(' ') + ` ${w - pad},${h - pad}`;
+
+    const initials = product.brand.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    const bg = `linear-gradient(135deg, hsl(${product.hue},62%,52%), hsl(${product.hue + 28},58%,44%))`;
+
+    const priceRows = product.prices.map(pr => ({
+      color: (data.STORES.find(s => s.name === pr.storeName) || {}).color || '#4338CA',
+      initial: pr.storeName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase(),
+      storeName: pr.storeName, isBest: pr.id === bp.id,
+      priceLabel: fmt(pr.currentPrice), originalLabel: fmt(pr.originalPrice), discountLabel: `${pr.discountPct}% off`,
+      couponLabel: pr.coupon || '—', bankOfferLabel: pr.bankOffer || '—',
+      deliveryLabel: (pr.deliveryFee === 0 ? 'Free' : fmt(pr.deliveryFee)) + ' · ' + pr.deliveryTime,
+      returnWarrantyLabel: `${pr.returnPolicy} / ${pr.warranty}`,
+      sellerRatingLabel: `★ ${pr.sellerRating}`,
+      lastUpdated: pr.lastUpdated,
+      buyHref: `#affiliate-redirect-${pr.storeId}`,
+    }));
+
+    const catProducts = data.getProducts({ country: product.country, category: product.category }).filter(p => p.id !== product.id);
+    const similarProducts = catProducts.slice(0, 4).map(p => ({ ...p, wishlisted: wishlist.includes(p.id) }));
+
+    const rangeOptions = [7, 30, 90, 365].map(d => ({
+      label: d === 365 ? '1Y' : `${d}D`, borderColor: days === d ? '#4338CA' : '#DCDBF0',
+      bg: days === d ? '#EEF0FB' : '#fff', color: days === d ? '#4338CA' : '#3E3C5C',
+      onClick: () => this.setDays(d),
+    }));
+
+    const CHANNELS = [
+      { id: 'email', label: 'Email', icon: 'mail' }, { id: 'whatsapp', label: 'WhatsApp', icon: 'whatsapp' },
+      { id: 'push', label: 'Push notification', icon: 'bell' }, { id: 'telegram', label: 'Telegram', icon: 'telegram' },
+    ];
+    const channelOptions = CHANNELS.map(c => ({ ...c, checked: channels.includes(c.id), onChange: () => this.toggleChannel(c.id) }));
+
+    return {
+      found: true, notFound: false,
+      pageTitle: `${product.title} Price Comparison — PriceRadar`,
+      categoryName: product.categoryName, title: product.title, brand: product.brand,
+      rating: product.rating.toFixed(1), reviews: product.reviews.toLocaleString('en-IN'),
+      imageBg: bg, initials,
+      mainImageUrl: `https://picsum.photos/seed/${product.id}/700/560`,
+      thumbs: [1, 2, 3, 4].map(n => ({ url: `https://picsum.photos/seed/${product.id}-${n}/200/160` })),
+      bestStoreName: bp.storeName, bestPriceLabel: fmt(bp.currentPrice), bestOriginalLabel: fmt(bp.originalPrice),
+      bestDiscountLabel: `${bp.discountPct}% off`,
+      bestDeliveryLabel: bp.deliveryFee === 0 ? 'Free delivery' : `${fmt(bp.deliveryFee)} delivery · ${bp.deliveryTime}`,
+      bestReturnPolicy: bp.returnPolicy,
+      bestBuyHref: `#affiliate-redirect-${bp.storeId}`,
+      heartIcon: wishlist.includes(product.id) ? 'heart-filled' : 'heart',
+      heartColor: wishlist.includes(product.id) ? '#DC2626' : '#1E1B4B',
+      wishlistLabel: wishlist.includes(product.id) ? 'Saved to wishlist' : 'Save to wishlist',
+      onToggleWishlist: this.onToggleWishlist,
+      specRows: Object.entries(product.specs).map(([key, val]) => ({ key, val })),
+      priceRows,
+      rangeOptions,
+      chartAreaPoints, chartLinePoints, chartDotX: pts[pts.length - 1][0], chartDotY: pts[pts.length - 1][1],
+      chartLow: fmt(hist.lowest), chartHigh: fmt(hist.highest), chartAvg: fmt(hist.average), chartCurrent: fmt(hist.current),
+      goodTimeBg: hist.goodTimeToBuy ? '#EAF7EE' : '#FEF3C7', goodTimeColor: hist.goodTimeToBuy ? '#16A34A' : '#B45309',
+      goodTimeIcon: hist.goodTimeToBuy ? 'check' : 'clock',
+      goodTimeText: hist.goodTimeToBuy ? `Good time to buy — price is at or below its ${days}-day average` : `Price is ${hist.dropPct <= 0 ? 'above' : 'near'} average — it may drop further`,
+      shortTitle: product.title.split(' ').slice(0, 3).join(' '),
+      alertCurrencySymbol: product.country === 'IN' ? '₹' : 'AED ',
+      alertTargetPreview: targetPrice || Math.round(bp.currentPrice * 0.9).toLocaleString('en-IN'),
+      targetPrice, targetPricePlaceholder: String(Math.round(bp.currentPrice * 0.9)),
+      onTargetPriceChange: this.onTargetPriceChange,
+      channelOptions,
+      onCreateAlert: this.onCreateAlert,
+      alertButtonLabel: alertCreated ? 'Alert created ✓' : 'Create price alert',
+    };
+  }
+}
+
+</script>
+</body>
+</html>

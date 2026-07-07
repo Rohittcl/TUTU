@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>PriceRadar — Compare Prices Across India &amp; UAE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#fff}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#fff;min-height:100vh;display:flex;flex-direction:column">
+
+  <div style="display:flex;justify-content:flex-end;align-items:center;gap:18px;padding:18px 24px">
+    <div style="position:relative">
+      <button onClick="{{ toggleCountryMenu }}" style="display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font:600 13.5px 'Manrope',sans-serif;color:#3E3C5C">
+        <dc-import name="Icon" icon-name="{{ 'globe' }}" size="{{ 14 }}" color="{{ '#3E3C5C' }}" hint-size="14,14"></dc-import>
+        {{ countryLabel }}
+        <dc-import name="Icon" icon-name="{{ 'chevron-down' }}" size="{{ 12 }}" color="{{ '#8B88A3' }}" hint-size="12,12"></dc-import>
+      </button>
+      <sc-if value="{{ countryMenuOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid #E7E9F1;border-radius:10px;box-shadow:0 16px 40px rgba(30,27,75,0.14);overflow:hidden;min-width:140px;z-index:50">
+          <sc-for list="{{ countryOptions }}" as="c" hint-placeholder-count="3">
+            <div onClick="{{ c.onClick }}" style="padding:10px 14px;cursor:pointer;font:600 13px 'Manrope',sans-serif;color:#27253F" style-hover="background:#F3F4F9">{{ c.label }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+      <a href="Dashboard.dc.html" style="text-decoration:none;display:flex;align-items:center;gap:7px">
+        <div style="width:28px;height:28px;border-radius:50%;background:#4338CA;color:#fff;display:flex;align-items:center;justify-content:center;font:800 12px 'Manrope',sans-serif">{{ userInitial }}</div>
+      </a>
+    </sc-if>
+    <sc-if value="{{ notLoggedIn }}" hint-placeholder-val="{{ true }}">
+      <a href="Login.dc.html" style="text-decoration:none;background:#4338CA;color:#fff;font:700 13px 'Manrope',sans-serif;padding:8px 16px;border-radius:8px">Login / Signup</a>
+    </sc-if>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 24px 80px;gap:22px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4338CA,#6366F1);display:flex;align-items:center;justify-content:center">
+        <dc-import name="Icon" icon-name="{{ 'trending' }}" size="{{ 22 }}" color="{{ '#fff' }}" hint-size="22,22"></dc-import>
+      </div>
+      <span style="font-size:34px;font-weight:800;color:#1E1B4B;letter-spacing:-0.02em">PriceRadar</span>
+    </div>
+
+    <div style="width:100%;max-width:600px;position:relative">
+      <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #DCDBF0;border-radius:26px;padding:14px 22px;box-shadow:0 2px 8px rgba(30,27,75,0.06)" style-hover="box-shadow:0 6px 18px rgba(30,27,75,0.12)">
+        <dc-import name="Icon" icon-name="{{ 'search' }}" size="{{ 18 }}" color="{{ '#8B88A3' }}" hint-size="18,18"></dc-import>
+        <input type="text" placeholder="Search any product, brand or model" value="{{ query }}" onChange="{{ onQueryChange }}" onKeyDown="{{ onKeyDown }}" style="border:none;outline:none;flex:1;font:500 16px 'Manrope',sans-serif;color:#1E1B4B" />
+      </div>
+      <sc-if value="{{ showSuggestions }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border:1px solid #E7E9F1;border-radius:16px;box-shadow:0 20px 50px rgba(30,27,75,0.16);overflow:hidden;z-index:40;text-align:left">
+          <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+            <div onClick="{{ s.onClick }}" style="padding:12px 18px;cursor:pointer;display:flex;align-items:center;gap:10px" style-hover="background:#F3F4F9">
+              <dc-import name="Icon" icon-name="{{ 'search' }}" size="{{ 13 }}" color="{{ '#B0AECB' }}" hint-size="13,13"></dc-import>
+              <span style="font-size:14px;font-weight:600;color:#27253F;flex:1">{{ s.title }}</span>
+              <span style="font-size:12px;color:#8B88A3">{{ s.categoryName }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <button onClick="{{ onSearch }}" style="background:#F3F4F9;color:#27253F;border:none;border-radius:9px;padding:11px 22px;font:700 13.5px 'Manrope',sans-serif;cursor:pointer">Compare Prices</button>
+      <a href="{{ dealsHref }}" style="text-decoration:none;background:#F3F4F9;color:#27253F;border-radius:9px;padding:11px 22px;font:700 13.5px 'Manrope',sans-serif">Today's Best Deals</a>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:14px">
+      <div style="position:relative">
+        <button onClick="{{ toggleCatMenu }}" style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font:700 13px 'Manrope',sans-serif;color:#4338CA">
+          Categories
+          <dc-import name="Icon" icon-name="{{ 'chevron-down' }}" size="{{ 12 }}" color="{{ '#4338CA' }}" hint-size="12,12"></dc-import>
+        </button>
+        <sc-if value="{{ catMenuOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid #E7E9F1;border-radius:14px;box-shadow:0 20px 50px rgba(30,27,75,0.16);padding:10px;z-index:40;display:grid;grid-template-columns:repeat(2,150px);gap:2px">
+            <sc-for list="{{ categoryLinks }}" as="cat" hint-placeholder-count="10">
+              <a href="{{ cat.href }}" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;text-decoration:none;color:#27253F" style-hover="background:#F3F4F9">
+                <dc-import name="Icon" icon-name="{{ cat.icon }}" size="{{ 14 }}" color="{{ '#4338CA' }}" hint-size="14,14"></dc-import>
+                <span style="font-size:12.5px;font-weight:600">{{ cat.name }}</span>
+              </a>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <span style="color:#DCDBF0">·</span>
+      <div style="position:relative">
+        <button onClick="{{ toggleTrendMenu }}" style="display:flex;align-items:center;gap:5px;background:none;border:none;cursor:pointer;font:700 13px 'Manrope',sans-serif;color:#4338CA">
+          Trending
+          <dc-import name="Icon" icon-name="{{ 'chevron-down' }}" size="{{ 12 }}" color="{{ '#4338CA' }}" hint-size="12,12"></dc-import>
+        </button>
+        <sc-if value="{{ trendMenuOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid #E7E9F1;border-radius:14px;box-shadow:0 20px 50px rgba(30,27,75,0.16);padding:10px;z-index:40;min-width:220px">
+            <sc-for list="{{ trendingSearches }}" as="t" hint-placeholder-count="6">
+              <a href="{{ t.href }}" style="display:block;padding:8px 10px;border-radius:8px;text-decoration:none;color:#27253F;font-size:12.5px;font-weight:600" style-hover="background:#F3F4F9">{{ t.label }}</a>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <span style="color:#DCDBF0">·</span>
+      <a href="{{ dealsHref }}" style="text-decoration:none;font:700 13px 'Manrope',sans-serif;color:#4338CA">Deals</a>
+      <span style="color:#DCDBF0">·</span>
+      <a href="Wishlist.dc.html" style="text-decoration:none;font:700 13px 'Manrope',sans-serif;color:#4338CA">Price Alerts</a>
+      <span style="color:#DCDBF0">·</span>
+      <a href="Blog.dc.html" style="text-decoration:none;font:700 13px 'Manrope',sans-serif;color:#4338CA">Blog</a>
+    </div>
+  </div>
+
+  <div style="background:#F8F8FC;border-top:1px solid #ECEBF5;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <span style="font-size:12.5px;color:#8B88A3">{{ countryLabel }} · Comparing 1,200+ live listings</span>
+    <div style="display:flex;gap:18px">
+      <a href="Company.dc.html#about" style="font-size:12.5px;color:#8B88A3;text-decoration:none">About</a>
+      <a href="Company.dc.html#privacy" style="font-size:12.5px;color:#8B88A3;text-decoration:none">Privacy</a>
+      <a href="Company.dc.html#terms" style="font-size:12.5px;color:#8B88A3;text-decoration:none">Terms</a>
+      <a href="Company.dc.html#affiliate" style="font-size:12.5px;color:#8B88A3;text-decoration:none">Affiliate disclosure</a>
+      <a href="Company.dc.html#contact" style="font-size:12.5px;color:#8B88A3;text-decoration:none">Contact</a>
+    </div>
+  </div>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    data: null, country: 'IN', user: null, query: '', showSuggestions: false,
+    countryMenuOpen: false, catMenuOpen: false, trendMenuOpen: false,
+  };
+
+  async componentDidMount() {
+    const data = await import('./data.js');
+    this.data = data;
+    const app = data.getAppState();
+    this.setState({ data, country: app.country, user: app.user });
+  }
+
+  onQueryChange = (e) => this.setState({ query: e.target.value, showSuggestions: true });
+  onSearch = () => { window.location.href = `Search.dc.html?q=${encodeURIComponent(this.state.query || '')}&country=${this.state.country}`; };
+  onKeyDown = (e) => { if (e.key === 'Enter') this.onSearch(); };
+  toggleCountryMenu = () => this.setState(s => ({ countryMenuOpen: !s.countryMenuOpen, catMenuOpen: false, trendMenuOpen: false }));
+  toggleCatMenu = () => this.setState(s => ({ catMenuOpen: !s.catMenuOpen, countryMenuOpen: false, trendMenuOpen: false }));
+  toggleTrendMenu = () => this.setState(s => ({ trendMenuOpen: !s.trendMenuOpen, countryMenuOpen: false, catMenuOpen: false }));
+  setCountry = (code) => { if (this.data) this.data.setCountry(code); this.setState({ country: code, countryMenuOpen: false }); window.location.reload(); };
+
+  renderVals() {
+    const { data, country, user, query, showSuggestions, countryMenuOpen, catMenuOpen, trendMenuOpen } = this.state;
+    if (!data) return { countryOptions: [], categoryLinks: [], trendingSearches: [], suggestions: [], showSuggestions: false };
+
+    let suggestions = [];
+    if (query) {
+      suggestions = data.getProducts({ query, country }).slice(0, 6).map(p => ({
+        title: p.title, categoryName: p.categoryName,
+        onClick: () => { window.location.href = `Product.dc.html?slug=${p.slug}`; },
+      }));
+    }
+
+    const popularBase = ['iPhone 16 Pro Max', 'Samsung 1.5 ton 5 star AC', 'Nike running shoes', 'Lakme lipstick', 'Sony headphones', 'Protein powder'];
+
+    return {
+      countryLabel: country === 'IN' ? 'India' : country === 'AE' ? 'UAE' : 'Global',
+      toggleCountryMenu: this.toggleCountryMenu, countryMenuOpen,
+      countryOptions: [
+        { label: 'India', onClick: () => this.setCountry('IN') },
+        { label: 'UAE', onClick: () => this.setCountry('AE') },
+        { label: 'Global', onClick: () => this.setCountry('GLOBAL') },
+      ],
+      loggedIn: !!user, notLoggedIn: !user, userInitial: user ? user.name.charAt(0).toUpperCase() : '',
+      query, onQueryChange: this.onQueryChange, onKeyDown: this.onKeyDown, onSearch: this.onSearch,
+      showSuggestions: showSuggestions && suggestions.length > 0, suggestions,
+      dealsHref: `Deals.dc.html?country=${country}`,
+      toggleCatMenu: this.toggleCatMenu, catMenuOpen,
+      categoryLinks: data.CATEGORIES.map(c => ({ name: c.name, icon: c.icon, href: `Category.dc.html?id=${c.id}&country=${country}` })),
+      toggleTrendMenu: this.toggleTrendMenu, trendMenuOpen,
+      trendingSearches: popularBase.map(q => ({ label: q, href: `Search.dc.html?q=${encodeURIComponent(q)}&country=${country}` })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

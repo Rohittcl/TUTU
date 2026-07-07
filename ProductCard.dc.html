@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;font-family:'Manrope',sans-serif;position:relative;transition:box-shadow .15s,transform .15s" style-hover="box-shadow:0 14px 32px rgba(30,27,75,0.12);transform:translateY(-2px)">
+  <a href="{{ href }}" style="text-decoration:none;display:block">
+    <div style="height:132px;border-radius:12px;background:{{ imageBg }};position:relative;overflow:hidden">
+      <img src="{{ imageUrl }}" alt="{{ title }}" style="width:100%;height:100%;object-fit:cover;display:block" />
+      <sc-if value="{{ showBestBadge }}" hint-placeholder-val="{{ false }}">
+        <span style="position:absolute;top:8px;left:8px;background:#16A34A;color:#fff;font:800 10px 'Manrope',sans-serif;padding:3px 8px;border-radius:6px;letter-spacing:0.02em">BEST PRICE</span>
+      </sc-if>
+    </div>
+  </a>
+  <button onClick="{{ onToggleWishlist }}" style="position:absolute;top:22px;right:22px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.1)">
+    <dc-import name="Icon" icon-name="{{ heartIcon }}" size="{{ 14 }}" color="{{ heartColor }}" hint-size="14,14"></dc-import>
+  </button>
+
+  <div style="display:flex;flex-direction:column;gap:4px">
+    <a href="{{ href }}" style="text-decoration:none">
+      <div style="font-size:14px;font-weight:700;color:#1E1B4B;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px">{{ title }}</div>
+    </a>
+    <div style="font-size:12px;color:#8B88A3;font-weight:600">{{ brand }} · {{ categoryName }}</div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6px">
+    <dc-import name="Icon" icon-name="{{ 'star' }}" size="{{ 12 }}" color="{{ '#F59E0B' }}" hint-size="12,12"></dc-import>
+    <span style="font-size:12px;font-weight:700;color:#1E1B4B">{{ rating }}</span>
+    <span style="font-size:12px;color:#B0AECB">({{ reviews }})</span>
+  </div>
+
+  <div style="display:flex;align-items:baseline;gap:8px">
+    <span style="font-size:19px;font-weight:800;color:#1E1B4B">{{ priceLabel }}</span>
+    <sc-if value="{{ hasDiscount }}" hint-placeholder-val="{{ false }}">
+      <span style="font-size:12.5px;color:#B0AECB;text-decoration:line-through">{{ originalPriceLabel }}</span>
+      <span style="font-size:12px;font-weight:800;color:#16A34A">{{ discountLabel }}</span>
+    </sc-if>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+    <span style="font-size:11.5px;font-weight:700;color:#4338CA;background:#EEF0FB;padding:3px 8px;border-radius:6px">{{ storeName }}</span>
+    <span style="font-size:11.5px;color:#8B88A3">{{ deliveryLabel }}</span>
+    <sc-if value="{{ hasCoupon }}" hint-placeholder-val="{{ false }}">
+      <span style="font-size:10.5px;font-weight:800;color:#B45309;background:#FEF3C7;padding:3px 7px;border-radius:6px">COUPON</span>
+    </sc-if>
+    <sc-if value="{{ hasBankOffer }}" hint-placeholder-val="{{ false }}">
+      <span style="font-size:10.5px;font-weight:800;color:#1D4ED8;background:#DBEAFE;padding:3px 7px;border-radius:6px">BANK OFFER</span>
+    </sc-if>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-top:2px">
+    <a href="{{ href }}" style="flex:1;text-align:center;background:#4338CA;color:#fff;font:700 12.5px 'Manrope',sans-serif;padding:9px 0;border-radius:9px;text-decoration:none">View Deal</a>
+    <a href="{{ href }}" style="flex:none;background:#F3F4F9;color:#1E1B4B;font:700 12.5px 'Manrope',sans-serif;padding:9px 14px;border-radius:9px;text-decoration:none">Compare</a>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:260,&quot;height&quot;:340}}">
+const HUE_BG = (hue) => `linear-gradient(135deg, hsl(${hue},62%,52%), hsl(${hue+28},58%,44%))`;
+
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props.product || {};
+    const bp = p.bestPrice || {};
+    const country = p.country || 'IN';
+    const fmt = (n) => (country === 'IN' ? '₹' : 'AED ') + Math.round(n || 0).toLocaleString('en-IN');
+    const initials = (p.brand || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    return {
+      href: `Product.dc.html?slug=${p.slug || ''}`,
+      imageBg: HUE_BG(p.hue || 231),
+      imageUrl: `https://picsum.photos/seed/${p.id || 'pr'}/400/300`,
+      initials,
+      showBestBadge: !!this.props.showBestBadge,
+      title: p.title || '', brand: p.brand || '', categoryName: p.categoryName || '',
+      rating: (p.rating || 0).toFixed(1), reviews: (p.reviews || 0).toLocaleString('en-IN'),
+      priceLabel: fmt(bp.currentPrice),
+      hasDiscount: !!bp.discountPct,
+      originalPriceLabel: fmt(bp.originalPrice),
+      discountLabel: `${bp.discountPct || 0}% off`,
+      storeName: bp.storeName || '',
+      deliveryLabel: bp.deliveryFee === 0 ? 'Free delivery' : bp.deliveryTime || '',
+      hasCoupon: !!bp.coupon, hasBankOffer: !!bp.bankOffer,
+      heartIcon: this.props.wishlisted ? 'heart-filled' : 'heart',
+      heartColor: this.props.wishlisted ? '#DC2626' : '#8B88A3',
+      onToggleWishlist: (e) => { e.preventDefault(); if (this.props.onToggleWishlist) this.props.onToggleWishlist(p.id); },
+    };
+  }
+}
+
+</script>
+</body>
+</html>

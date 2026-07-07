@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Search results — PriceRadar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#fff}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#fff;min-height:100vh">
+  <dc-import name="Header" active-page="search" initial-query="{{ query }}" hint-size="100%,72px"></dc-import>
+
+  <div style="max-width:1280px;margin:0 auto;padding:28px 24px 64px">
+    <div style="margin-bottom:6px;font-size:12.5px;color:#8B88A3;font-weight:600">Home / Search</div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px;flex-wrap:wrap;gap:10px">
+      <h1 style="font-size:24px;font-weight:800;color:#1E1B4B;margin:0">{{ resultsHeading }}</h1>
+      <span style="font-size:13.5px;color:#8B88A3;font-weight:600">{{ resultsCount }} results in {{ countryLabel }}</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:250px 1fr;gap:28px;align-items:start">
+      <aside style="background:#F8F8FC;border:1px solid #ECEBF5;border-radius:16px;padding:18px;position:sticky;top:88px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;font-weight:800;color:#1E1B4B">Filters</span>
+          <span onClick="{{ onClearFilters }}" style="font-size:12px;font-weight:700;color:#4338CA;cursor:pointer">Clear all</span>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#27253F;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.03em">Category</div>
+          <sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="6">
+            <label style="display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer">
+              <input type="checkbox" checked="{{ c.checked }}" onChange="{{ c.onChange }}" />
+              <span style="font-size:13px;color:#3E3C5C">{{ c.name }}</span>
+            </label>
+          </sc-for>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#27253F;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.03em">Brand</div>
+          <sc-for list="{{ brandOptions }}" as="b" hint-placeholder-count="6">
+            <label style="display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer">
+              <input type="checkbox" checked="{{ b.checked }}" onChange="{{ b.onChange }}" />
+              <span style="font-size:13px;color:#3E3C5C">{{ b.name }}</span>
+            </label>
+          </sc-for>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#27253F;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.03em">Store</div>
+          <sc-for list="{{ storeOptions }}" as="s" hint-placeholder-count="6">
+            <label style="display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer">
+              <input type="checkbox" checked="{{ s.checked }}" onChange="{{ s.onChange }}" />
+              <span style="font-size:13px;color:#3E3C5C">{{ s.name }}</span>
+            </label>
+          </sc-for>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#27253F;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.03em">Price range</div>
+          <div style="display:flex;gap:8px">
+            <input type="number" placeholder="Min" value="{{ minPrice }}" onChange="{{ onMinPriceChange }}" style="width:50%;border:1px solid #DCDBF0;border-radius:8px;padding:7px 8px;font-size:12.5px;outline:none" />
+            <input type="number" placeholder="Max" value="{{ maxPrice }}" onChange="{{ onMaxPriceChange }}" style="width:50%;border:1px solid #DCDBF0;border-radius:8px;padding:7px 8px;font-size:12.5px;outline:none" />
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#27253F;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.03em">Minimum discount</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ discountPresets }}" as="d" hint-placeholder-count="4">
+              <button onClick="{{ d.onClick }}" style="border:1px solid {{ d.borderColor }};background:{{ d.bg }};color:{{ d.color }};font:700 11.5px 'Manrope',sans-serif;padding:6px 10px;border-radius:8px;cursor:pointer">{{ d.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#27253F;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.03em">Rating</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ ratingPresets }}" as="r" hint-placeholder-count="3">
+              <button onClick="{{ r.onClick }}" style="border:1px solid {{ r.borderColor }};background:{{ r.bg }};color:{{ r.color }};font:700 11.5px 'Manrope',sans-serif;padding:6px 10px;border-radius:8px;cursor:pointer">{{ r.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked="{{ freeDelivery }}" onChange="{{ onFreeDelivery }}" /><span style="font-size:13px;color:#3E3C5C">Free delivery</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked="{{ inStock }}" onChange="{{ onInStock }}" /><span style="font-size:13px;color:#3E3C5C">In stock only</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked="{{ couponOnly }}" onChange="{{ onCouponOnly }}" /><span style="font-size:13px;color:#3E3C5C">Coupon available</span></label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked="{{ bankOfferOnly }}" onChange="{{ onBankOfferOnly }}" /><span style="font-size:13px;color:#3E3C5C">Bank offer available</span></label>
+        </div>
+      </aside>
+
+      <main>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+          <select onChange="{{ onSortChange }}" value="{{ sortBy }}" style="border:1px solid #DCDBF0;border-radius:10px;padding:9px 12px;font:700 13px 'Manrope',sans-serif;color:#27253F;background:#fff;outline:none">
+            <option value="price_low">Lowest price first</option>
+            <option value="discount">Highest discount</option>
+            <option value="rating">Best rating</option>
+            <option value="delivery">Fastest delivery</option>
+            <option value="popular">Most popular</option>
+            <option value="newest">Newest</option>
+            <option value="value">Best value</option>
+            <option value="drop_today">Price drop today</option>
+          </select>
+        </div>
+
+        <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+            <sc-for list="{{ results }}" as="p" hint-placeholder-count="6">
+              <dc-import name="ProductCard" product="{{ p }}" wishlisted="{{ p.wishlisted }}" on-toggle-wishlist="{{ onToggleWishlist }}" hint-size="100%,340px"></dc-import>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:80px 20px;color:#8B88A3">
+            <div style="font-size:16px;font-weight:800;color:#27253F;margin-bottom:8px">No products match those filters</div>
+            <div style="font-size:13.5px">Try clearing a filter or searching a different term.</div>
+          </div>
+        </sc-if>
+      </main>
+    </div>
+  </div>
+
+  <dc-import name="Footer" hint-size="100%,300px"></dc-import>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+function parseParams() {
+  const p = new URLSearchParams(window.location.search);
+  return { q: p.get('q') || '', country: p.get('country') || 'IN', store: p.get('store') || null };
+}
+
+class Component extends DCLogic {
+  state = {
+    data: null, country: 'IN', wishlist: [], query: '',
+    categories: [], brands: [], stores: [],
+    minPrice: '', maxPrice: '', minDiscount: 0, minRating: 0,
+    freeDelivery: false, inStock: false, couponOnly: false, bankOfferOnly: false,
+    sortBy: 'price_low',
+  };
+
+  async componentDidMount() {
+    const data = await import('./data.js');
+    this.data = data;
+    const params = parseParams();
+    const app = data.getAppState();
+    this.setState({
+      data, country: params.country || app.country, wishlist: app.wishlist, query: params.q,
+      stores: params.store ? [params.store] : [],
+    });
+  }
+
+  onToggleWishlist = (id) => { if (this.data) this.setState({ wishlist: this.data.toggleWishlist(id) }); };
+  toggleIn = (arr, val) => arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val];
+  onClearFilters = () => this.setState({ categories: [], brands: [], stores: [], minPrice: '', maxPrice: '', minDiscount: 0, minRating: 0, freeDelivery: false, inStock: false, couponOnly: false, bankOfferOnly: false });
+  onSortChange = (e) => this.setState({ sortBy: e.target.value });
+  onMinPriceChange = (e) => this.setState({ minPrice: e.target.value });
+  onMaxPriceChange = (e) => this.setState({ maxPrice: e.target.value });
+  onFreeDelivery = () => this.setState(s => ({ freeDelivery: !s.freeDelivery }));
+  onInStock = () => this.setState(s => ({ inStock: !s.inStock }));
+  onCouponOnly = () => this.setState(s => ({ couponOnly: !s.couponOnly }));
+  onBankOfferOnly = () => this.setState(s => ({ bankOfferOnly: !s.bankOfferOnly }));
+
+  renderVals() {
+    const { data, country, wishlist, query, categories, brands, stores, minPrice, maxPrice, minDiscount, minRating, freeDelivery, inStock, couponOnly, bankOfferOnly, sortBy } = this.state;
+    if (!data) return { results: [], hasResults: false, noResults: false, categoryOptions: [], brandOptions: [], storeOptions: [], discountPresets: [], ratingPresets: [] };
+
+    let base = data.getProducts({ country, query });
+    if (categories.length) base = base.filter(p => categories.includes(p.category));
+    if (brands.length) base = base.filter(p => brands.includes(p.brand));
+    if (stores.length) base = base.filter(p => p.prices.some(pr => stores.includes(pr.storeName)));
+    if (minPrice) base = base.filter(p => p.bestPrice.currentPrice >= Number(minPrice));
+    if (maxPrice) base = base.filter(p => p.bestPrice.currentPrice <= Number(maxPrice));
+    if (minDiscount) base = base.filter(p => p.bestDiscount >= minDiscount);
+    if (minRating) base = base.filter(p => p.rating >= minRating);
+    if (freeDelivery) base = base.filter(p => p.prices.some(pr => pr.deliveryFee === 0));
+    if (inStock) base = base.filter(p => p.prices.some(pr => pr.inStock));
+    if (couponOnly) base = base.filter(p => p.prices.some(pr => pr.coupon));
+    if (bankOfferOnly) base = base.filter(p => p.prices.some(pr => pr.bankOffer));
+
+    const deliveryRank = { 'Same day': 0, 'Next day': 1, '2-3 days': 2, '3-5 days': 3, '5-7 days': 4 };
+    const sorted = base.slice().sort((a, b) => {
+      switch (sortBy) {
+        case 'price_low': return a.bestPrice.currentPrice - b.bestPrice.currentPrice;
+        case 'discount': case 'drop_today': return b.bestDiscount - a.bestDiscount;
+        case 'rating': return b.rating - a.rating;
+        case 'delivery': return (deliveryRank[a.bestPrice.deliveryTime] ?? 9) - (deliveryRank[b.bestPrice.deliveryTime] ?? 9);
+        case 'popular': return b.reviews - a.reviews;
+        case 'newest': return b.id.localeCompare(a.id);
+        case 'value': return (b.rating * 20 - b.bestPrice.currentPrice / 1000) - (a.rating * 20 - a.bestPrice.currentPrice / 1000);
+        default: return 0;
+      }
+    });
+
+    const results = sorted.map(p => ({ ...p, wishlisted: wishlist.includes(p.id) }));
+
+    const cats = [...new Set(base.concat(data.getProducts({ country })).map(p => p.category))];
+    const categoryOptions = data.CATEGORIES.filter(c => data.getProducts({ country, category: c.id }).length > 0).map(c => ({
+      name: c.name, checked: categories.includes(c.id),
+      onChange: () => this.setState({ categories: this.toggleIn(categories, c.id) }),
+    }));
+    const brandSet = [...new Set(data.getProducts({ country }).map(p => p.brand))].sort();
+    const brandOptions = brandSet.map(b => ({ name: b, checked: brands.includes(b), onChange: () => this.setState({ brands: this.toggleIn(brands, b) }) }));
+    const storeOptions = data.STORES.filter(s => s.country === country).map(s => ({ name: s.name, checked: stores.includes(s.name), onChange: () => this.setState({ stores: this.toggleIn(stores, s.name) }) }));
+
+    const discountPresets = [10, 20, 30, 50].map(v => ({
+      label: `${v}%+`, borderColor: minDiscount === v ? '#4338CA' : '#DCDBF0',
+      bg: minDiscount === v ? '#EEF0FB' : '#fff', color: minDiscount === v ? '#4338CA' : '#3E3C5C',
+      onClick: () => this.setState({ minDiscount: minDiscount === v ? 0 : v }),
+    }));
+    const ratingPresets = [4, 4.5].map(v => ({
+      label: `${v}+ ★`, borderColor: minRating === v ? '#4338CA' : '#DCDBF0',
+      bg: minRating === v ? '#EEF0FB' : '#fff', color: minRating === v ? '#4338CA' : '#3E3C5C',
+      onClick: () => this.setState({ minRating: minRating === v ? 0 : v }),
+    }));
+
+    return {
+      query, resultsHeading: query ? `Results for "${query}"` : 'All products',
+      resultsCount: results.length, countryLabel: country === 'IN' ? 'India' : country === 'AE' ? 'UAE' : 'Global',
+      categoryOptions, brandOptions, storeOptions, discountPresets, ratingPresets,
+      minPrice, maxPrice, onMinPriceChange: this.onMinPriceChange, onMaxPriceChange: this.onMaxPriceChange,
+      freeDelivery, inStock, couponOnly, bankOfferOnly,
+      onFreeDelivery: this.onFreeDelivery, onInStock: this.onInStock, onCouponOnly: this.onCouponOnly, onBankOfferOnly: this.onBankOfferOnly,
+      onClearFilters: this.onClearFilters, sortBy, onSortChange: this.onSortChange,
+      results, hasResults: results.length > 0, noResults: results.length === 0,
+      onToggleWishlist: this.onToggleWishlist,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

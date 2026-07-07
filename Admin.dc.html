@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Admin Dashboard — PriceRadar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#F8F8FC}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#F8F8FC;min-height:100vh">
+  <dc-import name="Header" active-page="admin" hint-size="100%,72px"></dc-import>
+
+  <div style="max-width:1320px;margin:0 auto;padding:24px 24px 64px;display:grid;grid-template-columns:220px 1fr;gap:24px">
+    <aside style="display:flex;flex-direction:column;gap:2px;background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:10px;align-self:start;position:sticky;top:88px">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="8">
+        <button onClick="{{ n.onClick }}" style="display:flex;align-items:center;gap:10px;border:none;background:{{ n.bg }};color:{{ n.color }};border-radius:10px;padding:10px 12px;font:700 13px 'Manrope',sans-serif;cursor:pointer;text-align:left">
+          <dc-import name="Icon" icon-name="{{ n.icon }}" size="{{ 15 }}" color="{{ n.color }}" hint-size="15,15"></dc-import>
+          {{ n.label }}
+        </button>
+      </sc-for>
+    </aside>
+
+    <main style="display:flex;flex-direction:column;gap:20px">
+
+      <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+          <sc-for list="{{ overviewStats }}" as="s" hint-placeholder-count="4">
+            <div style="background:#fff;border:1px solid #ECEBF5;border-radius:14px;padding:18px">
+              <div style="font-size:12px;color:#8B88A3;font-weight:700">{{ s.label }}</div>
+              <div style="font-size:24px;font-weight:800;color:#1E1B4B;margin-top:6px">{{ s.value }}</div>
+              <div style="font-size:11.5px;font-weight:700;color:#16A34A;margin-top:4px">{{ s.delta }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+          <div style="font-size:14px;font-weight:800;color:#1E1B4B;margin-bottom:16px">Outbound clicks — last 7 days</div>
+          <div style="display:flex;align-items:flex-end;gap:10px;height:120px">
+            <sc-for list="{{ clickBars }}" as="b" hint-placeholder-count="7">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%">
+                <div style="width:100%;background:#4338CA;border-radius:6px 6px 0 0;height:{{ b.height }}"></div>
+                <span style="font-size:10.5px;color:#8B88A3">{{ b.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+            <div style="font-size:14px;font-weight:800;color:#1E1B4B;margin-bottom:14px">Revenue by affiliate network</div>
+            <sc-for list="{{ revenueRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #F0F0F5">
+                <span style="font-size:13px;color:#3E3C5C;font-weight:600">{{ r.network }}</span>
+                <span style="font-size:13px;font-weight:800;color:#1E1B4B">{{ r.amount }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+            <div style="font-size:14px;font-weight:800;color:#1E1B4B;margin-bottom:14px">Store-wise performance</div>
+            <sc-for list="{{ storePerf }}" as="sp" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #F0F0F5">
+                <span style="font-size:13px;color:#3E3C5C;font-weight:600">{{ sp.name }}</span>
+                <span style="font-size:12.5px;color:#8B88A3">{{ sp.clicks }} clicks · {{ sp.conv }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProducts }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div style="font-size:15px;font-weight:800;color:#1E1B4B">Products ({{ productCount }})</div>
+            <button onClick="{{ onAddProduct }}" style="background:#4338CA;color:#fff;border:none;border-radius:9px;padding:9px 16px;font:700 12.5px 'Manrope',sans-serif;cursor:pointer">+ Add product</button>
+          </div>
+          <sc-if value="{{ showAddProduct }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+              <input placeholder="Title" value="{{ newProductTitle }}" onChange="{{ onNewProductTitle }}" style="flex:1;min-width:180px;border:1px solid #DCDBF0;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none" />
+              <input placeholder="Brand" value="{{ newProductBrand }}" onChange="{{ onNewProductBrand }}" style="width:140px;border:1px solid #DCDBF0;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none" />
+              <input placeholder="Price" type="number" value="{{ newProductPrice }}" onChange="{{ onNewProductPrice }}" style="width:110px;border:1px solid #DCDBF0;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none" />
+              <button onClick="{{ onSaveNewProduct }}" style="background:#16A34A;color:#fff;border:none;border-radius:8px;padding:8px 16px;font:700 12.5px 'Manrope',sans-serif;cursor:pointer">Save</button>
+            </div>
+          </sc-if>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Title</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Brand</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Category</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Price</th><th></th></tr></thead>
+            <tbody>
+              <sc-for list="{{ productRows }}" as="p" hint-placeholder-count="8">
+                <tr style="border-top:1px solid #F0F0F5">
+                  <td style="padding:10px 8px;font-size:13px;font-weight:600;color:#1E1B4B">{{ p.title }}</td>
+                  <td style="padding:10px 8px;font-size:12.5px;color:#3E3C5C">{{ p.brand }}</td>
+                  <td style="padding:10px 8px;font-size:12.5px;color:#3E3C5C">{{ p.categoryName }}</td>
+                  <td style="padding:10px 8px;font-size:12.5px;color:#3E3C5C">{{ p.priceLabel }}</td>
+                  <td style="padding:10px 8px"><button onClick="{{ p.onDelete }}" style="background:none;border:none;cursor:pointer;color:#DC2626;font-size:12px;font-weight:700">Delete</button></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStores }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div style="font-size:15px;font-weight:800;color:#1E1B4B">Stores ({{ storeCount }})</div>
+            <div style="display:flex;gap:8px">
+              <input placeholder="New store name" value="{{ newStoreName }}" onChange="{{ onNewStoreName }}" style="border:1px solid #DCDBF0;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none" />
+              <button onClick="{{ onAddStore }}" style="background:#4338CA;color:#fff;border:none;border-radius:9px;padding:9px 16px;font:700 12.5px 'Manrope',sans-serif;cursor:pointer">+ Add</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+            <sc-for list="{{ storeRows }}" as="s" hint-placeholder-count="9">
+              <div style="display:flex;align-items:center;justify-content:space-between;background:#F8F8FC;border:1px solid #ECEBF5;border-radius:10px;padding:11px 14px">
+                <div style="display:flex;align-items:center;gap:9px">
+                  <div style="width:26px;height:26px;border-radius:7px;background:{{ s.color }};color:#fff;display:flex;align-items:center;justify-content:center;font:800 11px 'Manrope',sans-serif">{{ s.initial }}</div>
+                  <span style="font-size:13px;font-weight:700;color:#27253F">{{ s.name }}</span>
+                </div>
+                <button onClick="{{ s.onDelete }}" style="background:none;border:none;cursor:pointer;color:#DC2626;font-size:11.5px;font-weight:700">Remove</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCoupons }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div style="font-size:15px;font-weight:800;color:#1E1B4B">Coupons</div>
+            <div style="display:flex;gap:8px">
+              <input placeholder="CODE" value="{{ newCouponCode }}" onChange="{{ onNewCouponCode }}" style="border:1px solid #DCDBF0;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none;text-transform:uppercase" />
+              <button onClick="{{ onAddCoupon }}" style="background:#4338CA;color:#fff;border:none;border-radius:9px;padding:9px 16px;font:700 12.5px 'Manrope',sans-serif;cursor:pointer">+ Add</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ couponRows }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex;justify-content:space-between;align-items:center;background:#F8F8FC;border:1px solid #ECEBF5;border-radius:10px;padding:11px 16px">
+                <span style="font-size:13px;font-weight:800;color:#B45309;background:#FEF3C7;padding:3px 10px;border-radius:6px">{{ c.code }}</span>
+                <button onClick="{{ c.onDelete }}" style="background:none;border:none;cursor:pointer;color:#DC2626;font-size:11.5px;font-weight:700">Remove</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDeals }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+          <div style="font-size:15px;font-weight:800;color:#1E1B4B;margin-bottom:16px">Submitted deals awaiting review</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ pendingDeals }}" as="d" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;align-items:center;background:#F8F8FC;border:1px solid #ECEBF5;border-radius:10px;padding:13px 16px">
+                <div>
+                  <div style="font-size:13.5px;font-weight:700;color:#1E1B4B">{{ d.title }}</div>
+                  <div style="font-size:12px;color:#8B88A3">Submitted by {{ d.submitter }} · {{ d.store }}</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <button onClick="{{ d.onApprove }}" style="background:#16A34A;color:#fff;border:none;border-radius:8px;padding:7px 14px;font:700 12px 'Manrope',sans-serif;cursor:pointer">Approve</button>
+                  <button onClick="{{ d.onReject }}" style="background:#fff;border:1px solid #DCDBF0;color:#DC2626;border-radius:8px;padding:7px 14px;font:700 12px 'Manrope',sans-serif;cursor:pointer">Reject</button>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noPending }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#8B88A3;padding:14px 0">No deals pending review.</div></sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLogs }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+          <div style="font-size:15px;font-weight:800;color:#1E1B4B;margin-bottom:16px">Recent price change logs</div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Product</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Store</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Price</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Updated</th></tr></thead>
+            <tbody>
+              <sc-for list="{{ priceLogs }}" as="l" hint-placeholder-count="10">
+                <tr style="border-top:1px solid #F0F0F5">
+                  <td style="padding:10px 8px;font-size:13px;font-weight:600;color:#1E1B4B">{{ l.title }}</td>
+                  <td style="padding:10px 8px;font-size:12.5px;color:#3E3C5C">{{ l.store }}</td>
+                  <td style="padding:10px 8px;font-size:12.5px;color:#3E3C5C">{{ l.priceLabel }}</td>
+                  <td style="padding:10px 8px;font-size:12px;color:#8B88A3">{{ l.updated }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isUserAlerts }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px solid #ECEBF5;border-radius:16px;padding:22px">
+          <div style="font-size:15px;font-weight:800;color:#1E1B4B;margin-bottom:16px">User price alerts (this device)</div>
+          <sc-if value="{{ hasAdminAlerts }}" hint-placeholder-val="{{ false }}">
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Product</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Target</th><th style="text-align:left;padding:8px;font-size:11px;color:#8B88A3;text-transform:uppercase">Channels</th></tr></thead>
+              <tbody>
+                <sc-for list="{{ adminAlerts }}" as="a" hint-placeholder-count="4">
+                  <tr style="border-top:1px solid #F0F0F5">
+                    <td style="padding:10px 8px;font-size:13px;font-weight:600;color:#1E1B4B">{{ a.title }}</td>
+                    <td style="padding:10px 8px;font-size:12.5px;color:#3E3C5C">{{ a.targetLabel }}</td>
+                    <td style="padding:10px 8px;font-size:12px;color:#8B88A3">{{ a.channels }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </sc-if>
+          <sc-if value="{{ noAdminAlerts }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:#8B88A3">No alerts created yet.</div></sc-if>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <dc-import name="Footer" hint-size="100%,300px"></dc-import>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    data: null, tab: 'overview',
+    deletedProducts: [], addedProducts: [],
+    deletedStores: [], addedStores: [],
+    coupons: ['SAVE10', 'NEW200', 'FEST500', 'WELCOME15'],
+    showAddProduct: false, newProductTitle: '', newProductBrand: '', newProductPrice: '',
+    newStoreName: '', newCouponCode: '',
+    pendingDeals: [
+      { id: 'pd1', title: 'Samsung Galaxy Buds3 — 35% off', submitter: 'partner_seller_01', store: 'Croma' },
+      { id: 'pd2', title: 'Fossil watch clearance', submitter: 'partner_seller_04', store: 'Namshi' },
+      { id: 'pd3', title: 'BigBasket grocery combo', submitter: 'partner_seller_02', store: 'BigBasket' },
+    ],
+  };
+
+  async componentDidMount() {
+    const data = await import('./data.js');
+    this.setState({ data });
+  }
+
+  setTab = (t) => this.setState({ tab: t });
+  onAddProduct = () => this.setState(s => ({ showAddProduct: !s.showAddProduct }));
+  onSaveNewProduct = () => {
+    const { newProductTitle, newProductBrand, newProductPrice } = this.state;
+    if (!newProductTitle) return;
+    this.setState(s => ({
+      addedProducts: [...s.addedProducts, { id: 'new' + Date.now(), title: newProductTitle, brand: newProductBrand || '—', categoryName: 'Uncategorized', priceLabel: newProductPrice ? `₹${newProductPrice}` : '—' }],
+      newProductTitle: '', newProductBrand: '', newProductPrice: '', showAddProduct: false,
+    }));
+  };
+  deleteProduct = (id) => this.setState(s => ({ deletedProducts: [...s.deletedProducts, id] }));
+  onAddStore = () => {
+    if (!this.state.newStoreName) return;
+    this.setState(s => ({ addedStores: [...s.addedStores, { id: 'ns' + Date.now(), name: s.newStoreName, initial: s.newStoreName.slice(0, 2).toUpperCase(), color: '#4338CA' }], newStoreName: '' }));
+  };
+  deleteStore = (id) => this.setState(s => ({ deletedStores: [...s.deletedStores, id] }));
+  onAddCoupon = () => { if (this.state.newCouponCode) this.setState(s => ({ coupons: [...s.coupons, s.newCouponCode.toUpperCase()], newCouponCode: '' })); };
+  deleteCoupon = (code) => this.setState(s => ({ coupons: s.coupons.filter(c => c !== code) }));
+  approveDeal = (id) => this.setState(s => ({ pendingDeals: s.pendingDeals.filter(d => d.id !== id) }));
+  rejectDeal = (id) => this.setState(s => ({ pendingDeals: s.pendingDeals.filter(d => d.id !== id) }));
+
+  renderVals() {
+    const { data, tab, deletedProducts, addedProducts, deletedStores, addedStores, coupons, pendingDeals } = this.state;
+    if (!data) return { isOverview: true };
+
+    const NAV = [
+      { id: 'overview', label: 'Overview', icon: 'dashboard' },
+      { id: 'products', label: 'Products', icon: 'grid' },
+      { id: 'stores', label: 'Stores', icon: 'shield' },
+      { id: 'coupons', label: 'Coupons', icon: 'tag' },
+      { id: 'deals', label: 'Deal approvals', icon: 'check' },
+      { id: 'logs', label: 'Price change logs', icon: 'trending' },
+      { id: 'useralerts', label: 'User alerts', icon: 'bell' },
+    ];
+    const navItems = NAV.map(n => ({
+      ...n, onClick: () => this.setTab(n.id),
+      bg: tab === n.id ? '#EEF0FB' : 'transparent', color: tab === n.id ? '#4338CA' : '#4B4A63',
+    }));
+
+    const productRows = data.PRODUCTS.filter(p => !deletedProducts.includes(p.id)).slice(0, 24).map(p => {
+      const enriched = data.enrichProduct(p);
+      return { title: p.title, brand: p.brand, categoryName: p.categoryName, priceLabel: data.formatPrice(enriched.bestPrice.currentPrice, p.country), onDelete: () => this.deleteProduct(p.id) };
+    }).concat(addedProducts.map(p => ({ ...p, onDelete: () => this.deleteProduct(p.id) })));
+
+    const storeRows = data.STORES.filter(s => !deletedStores.includes(s.id)).map(s => ({ name: s.name, initial: s.initial, color: s.color, onDelete: () => this.deleteStore(s.id) }))
+      .concat(addedStores.map(s => ({ ...s, onDelete: () => this.deleteStore(s.id) })));
+
+    const couponRows = coupons.map(c => ({ code: c, onDelete: () => this.deleteCoupon(c) }));
+
+    const priceLogs = data.PRICES.slice(0, 14).map(pr => {
+      const prod = data.PRODUCTS.find(p => p.id === pr.productId);
+      return { title: prod ? prod.title : pr.productId, store: pr.storeName, priceLabel: data.formatPrice(pr.currentPrice, pr.country), updated: pr.lastUpdated };
+    });
+
+    const app = data.getAppState();
+    const adminAlerts = (app.alerts || []).map(a => {
+      const p = data.PRODUCTS.find(pr => pr.id === a.productId);
+      return { title: p ? p.title : a.productId, targetLabel: data.formatPrice(a.targetPrice, p ? p.country : 'IN'), channels: (a.channel || []).join(', ') };
+    });
+
+    return {
+      navItems,
+      isOverview: tab === 'overview', isProducts: tab === 'products', isStores: tab === 'stores',
+      isCoupons: tab === 'coupons', isDeals: tab === 'deals', isLogs: tab === 'logs', isUserAlerts: tab === 'useralerts',
+      overviewStats: [
+        { label: 'Total products', value: data.PRODUCTS.length, delta: '+4 this week' },
+        { label: 'Total stores', value: data.STORES.length, delta: '+1 this month' },
+        { label: 'Outbound clicks (7d)', value: '18,204', delta: '+12.4%' },
+        { label: 'Est. affiliate revenue', value: '₹2,84,600', delta: '+8.1%' },
+      ],
+      clickBars: [40, 62, 55, 78, 90, 70, 85].map((v, i) => ({ height: `${v}%`, label: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i] })),
+      revenueRows: [
+        { network: 'Amazon Associates', amount: '₹1,12,400' }, { network: 'Flipkart Affiliate', amount: '₹78,900' },
+        { network: 'Noon Partner Program', amount: 'AED 6,240' }, { network: 'CJ Affiliate (misc.)', amount: '₹41,200' },
+      ],
+      storePerf: data.STORES.slice(0, 4).map(s => ({ name: s.name, clicks: Math.floor(400 + s.rating * 300), conv: `${(2 + s.rating).toFixed(1)}% CVR` })),
+
+      productCount: productRows.length, productRows,
+      showAddProduct: this.state.showAddProduct, onAddProduct: this.onAddProduct,
+      newProductTitle: this.state.newProductTitle, newProductBrand: this.state.newProductBrand, newProductPrice: this.state.newProductPrice,
+      onNewProductTitle: (e) => this.setState({ newProductTitle: e.target.value }),
+      onNewProductBrand: (e) => this.setState({ newProductBrand: e.target.value }),
+      onNewProductPrice: (e) => this.setState({ newProductPrice: e.target.value }),
+      onSaveNewProduct: this.onSaveNewProduct,
+
+      storeCount: storeRows.length, storeRows,
+      newStoreName: this.state.newStoreName, onNewStoreName: (e) => this.setState({ newStoreName: e.target.value }), onAddStore: this.onAddStore,
+
+      couponRows, newCouponCode: this.state.newCouponCode, onNewCouponCode: (e) => this.setState({ newCouponCode: e.target.value }), onAddCoupon: this.onAddCoupon,
+
+      pendingDeals: pendingDeals.map(d => ({ ...d, onApprove: () => this.approveDeal(d.id), onReject: () => this.rejectDeal(d.id) })),
+      noPending: pendingDeals.length === 0,
+
+      priceLogs,
+      adminAlerts, hasAdminAlerts: adminAlerts.length > 0, noAdminAlerts: adminAlerts.length === 0,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

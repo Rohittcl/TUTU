@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>My Dashboard — PriceRadar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#fff}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#fff;min-height:100vh">
+  <dc-import name="Header" active-page="dashboard" hint-size="100%,72px"></dc-import>
+
+  <sc-if value="{{ notLoggedIn }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:480px;margin:80px auto;text-align:center">
+      <div style="font-size:18px;font-weight:800;color:#1E1B4B;margin-bottom:10px">Log in to see your dashboard</div>
+      <a href="Login.dc.html" style="color:#4338CA;font-weight:700;text-decoration:none">Go to login →</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ true }}">
+  <div style="max-width:1280px;margin:0 auto;padding:32px 24px 64px">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:32px">
+      <div style="width:56px;height:56px;border-radius:50%;background:#4338CA;color:#fff;display:flex;align-items:center;justify-content:center;font:800 22px 'Manrope',sans-serif">{{ userInitial }}</div>
+      <div>
+        <h1 style="font-size:22px;font-weight:800;color:#1E1B4B;margin:0">{{ userName }}</h1>
+        <span style="font-size:13px;color:#8B88A3">{{ userEmail }}</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        <div style="background:#F8F8FC;border:1px solid #ECEBF5;border-radius:14px;padding:18px">
+          <div style="font-size:24px;font-weight:800;color:#1E1B4B">{{ s.value }}</div>
+          <div style="font-size:12.5px;color:#8B88A3;font-weight:600;margin-top:4px">{{ s.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <section style="margin-bottom:40px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px">
+        <h2 style="font-size:18px;font-weight:800;color:#1E1B4B;margin:0">Watched products</h2>
+        <a href="Wishlist.dc.html" style="font-size:13px;font-weight:700;color:#4338CA;text-decoration:none">Manage all →</a>
+      </div>
+      <sc-if value="{{ hasWatched }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+          <sc-for list="{{ watched }}" as="p" hint-placeholder-count="4">
+            <dc-import name="ProductCard" product="{{ p }}" wishlisted="{{ true }}" on-toggle-wishlist="{{ onToggleWishlist }}" hint-size="100%,340px"></dc-import>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noWatched }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#F8F8FC;border:1px solid #ECEBF5;border-radius:14px;padding:30px;text-align:center;font-size:13.5px;color:#8B88A3">No products watched yet.</div>
+      </sc-if>
+    </section>
+
+    <section style="margin-bottom:40px">
+      <h2 style="font-size:18px;font-weight:800;color:#1E1B4B;margin:0 0 16px">Recommended for you</h2>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <sc-for list="{{ recommended }}" as="p" hint-placeholder-count="4">
+          <dc-import name="ProductCard" product="{{ p }}" wishlisted="{{ p.wishlisted }}" on-toggle-wishlist="{{ onToggleWishlist }}" hint-size="100%,340px"></dc-import>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="background:#F8F8FC;border:1px solid #ECEBF5;border-radius:16px;padding:24px">
+      <h2 style="font-size:16px;font-weight:800;color:#1E1B4B;margin:0 0 16px">Notification preferences</h2>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ prefs }}" as="pr" hint-placeholder-count="4">
+          <label style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #ECEBF5;border-radius:10px;padding:12px 16px;cursor:pointer">
+            <span style="font-size:13.5px;font-weight:600;color:#27253F">{{ pr.label }}</span>
+            <input type="checkbox" checked="{{ pr.checked }}" onChange="{{ pr.onChange }}" />
+          </label>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <dc-import name="Footer" hint-size="100%,300px"></dc-import>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { data: null, user: null, wishlist: [], alerts: [], country: 'IN',
+    prefs: { email: true, whatsapp: false, push: true, telegram: false } };
+
+  async componentDidMount() {
+    const data = await import('./data.js');
+    this.data = data;
+    const app = data.getAppState();
+    this.setState({ data, user: app.user, wishlist: app.wishlist, alerts: app.alerts, country: app.country });
+  }
+
+  onToggleWishlist = (id) => { if (this.data) this.setState({ wishlist: this.data.toggleWishlist(id) }); };
+  togglePref = (k) => this.setState(s => ({ prefs: { ...s.prefs, [k]: !s.prefs[k] } }));
+
+  renderVals() {
+    const { data, user, wishlist, alerts, country, prefs } = this.state;
+    if (!data) return { loggedIn: false, notLoggedIn: false };
+    if (!user) return { loggedIn: false, notLoggedIn: true };
+
+    const watched = wishlist.map(id => data.enrichProduct(data.PRODUCTS.find(p => p.id === id))).filter(Boolean).map(p => ({ ...p, wishlisted: true }));
+    const recommended = data.getProducts({ country, sortBy: 'rating' }).filter(p => !wishlist.includes(p.id)).slice(0, 4).map(p => ({ ...p, wishlisted: false }));
+    const dropsHit = alerts.filter(a => {
+      const p = data.enrichProduct(data.PRODUCTS.find(pr => pr.id === a.productId));
+      return p && p.bestPrice.currentPrice <= a.targetPrice;
+    }).length;
+
+    const PREF_LABELS = { email: 'Email notifications', whatsapp: 'WhatsApp alerts', push: 'Push notifications', telegram: 'Telegram alerts' };
+    const prefRows = Object.keys(PREF_LABELS).map(k => ({ label: PREF_LABELS[k], checked: prefs[k], onChange: () => this.togglePref(k) }));
+
+    return {
+      loggedIn: true, notLoggedIn: false,
+      userInitial: user.name.charAt(0).toUpperCase(), userName: user.name, userEmail: user.email,
+      stats: [
+        { value: watched.length, label: 'Saved products' },
+        { value: alerts.length, label: 'Active price alerts' },
+        { value: dropsHit, label: 'Price drops hit' },
+        { value: country === 'IN' ? 'India' : 'UAE', label: 'Home market' },
+      ],
+      hasWatched: watched.length > 0, noWatched: watched.length === 0, watched,
+      recommended,
+      onToggleWishlist: this.onToggleWishlist,
+      prefs: prefRows,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

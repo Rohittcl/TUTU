@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Login — PriceRadar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#fff}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#fff;min-height:100vh">
+  <dc-import name="Header" active-page="login" hint-size="100%,72px"></dc-import>
+
+  <div style="max-width:420px;margin:56px auto;padding:0 24px 64px">
+    <div style="background:#fff;border:1px solid #ECEBF5;border-radius:20px;padding:32px;box-shadow:0 20px 50px rgba(30,27,75,0.08)">
+      <div style="display:flex;gap:6px;background:#F3F4F9;border-radius:12px;padding:4px;margin-bottom:24px">
+        <button onClick="{{ onShowLogin }}" style="flex:1;border:none;border-radius:9px;padding:10px 0;font:800 13px 'Manrope',sans-serif;cursor:pointer;background:{{ loginTabBg }};color:{{ loginTabColor }}">Log in</button>
+        <button onClick="{{ onShowSignup }}" style="flex:1;border:none;border-radius:9px;padding:10px 0;font:800 13px 'Manrope',sans-serif;cursor:pointer;background:{{ signupTabBg }};color:{{ signupTabColor }}">Sign up</button>
+      </div>
+
+      <h1 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 6px">{{ heading }}</h1>
+      <p style="font-size:13px;color:#8B88A3;margin:0 0 22px">{{ subheading }}</p>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#27253F;margin-bottom:6px">Full name</div>
+            <input type="text" value="{{ name }}" onChange="{{ onNameChange }}" placeholder="Priya Sharma" style="width:100%;box-sizing:border-box;border:1px solid #DCDBF0;border-radius:10px;padding:11px 14px;font-size:14px;outline:none" />
+          </div>
+        </sc-if>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#27253F;margin-bottom:6px">Email</div>
+          <input type="email" value="{{ email }}" onChange="{{ onEmailChange }}" placeholder="you@email.com" style="width:100%;box-sizing:border-box;border:1px solid #DCDBF0;border-radius:10px;padding:11px 14px;font-size:14px;outline:none" />
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#27253F;margin-bottom:6px">Password</div>
+          <input type="password" value="{{ password }}" onChange="{{ onPasswordChange }}" placeholder="••••••••" style="width:100%;box-sizing:border-box;border:1px solid #DCDBF0;border-radius:10px;padding:11px 14px;font-size:14px;outline:none" />
+        </div>
+        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:12.5px;color:#DC2626;font-weight:600">{{ errorText }}</span>
+        </sc-if>
+        <button onClick="{{ onSubmit }}" style="background:#4338CA;color:#fff;border:none;border-radius:10px;padding:12px 0;font:800 14px 'Manrope',sans-serif;cursor:pointer;margin-top:4px">{{ submitLabel }}</button>
+      </div>
+
+      <div style="text-align:center;font-size:12px;color:#B0AECB;margin:18px 0">or continue with</div>
+      <div style="display:flex;gap:10px">
+        <button style="flex:1;border:1px solid #DCDBF0;background:#fff;border-radius:10px;padding:10px 0;font:700 12.5px 'Manrope',sans-serif;color:#3E3C5C;cursor:pointer">Google</button>
+        <button style="flex:1;border:1px solid #DCDBF0;background:#fff;border-radius:10px;padding:10px 0;font:700 12.5px 'Manrope',sans-serif;color:#3E3C5C;cursor:pointer">Apple</button>
+      </div>
+    </div>
+  </div>
+
+  <dc-import name="Footer" hint-size="100%,300px"></dc-import>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { mode: 'login', name: '', email: '', password: '', error: '' };
+
+  onNameChange = (e) => this.setState({ name: e.target.value });
+  onEmailChange = (e) => this.setState({ email: e.target.value });
+  onPasswordChange = (e) => this.setState({ password: e.target.value });
+
+  onSubmit = async () => {
+    const { mode, name, email, password } = this.state;
+    if (!email || !password || (mode === 'signup' && !name)) {
+      this.setState({ error: 'Please fill in all fields.' }); return;
+    }
+    const data = await import('./data.js');
+    data.login(mode === 'signup' ? name : email.split('@')[0], email);
+    window.location.href = 'Dashboard.dc.html';
+  };
+
+  renderVals() {
+    const { mode, name, email, password, error } = this.state;
+    const isSignup = mode === 'signup';
+    return {
+      isSignup,
+      loginTabBg: !isSignup ? '#fff' : 'transparent', loginTabColor: !isSignup ? '#4338CA' : '#8B88A3',
+      signupTabBg: isSignup ? '#fff' : 'transparent', signupTabColor: isSignup ? '#4338CA' : '#8B88A3',
+      onShowLogin: () => this.setState({ mode: 'login', error: '' }),
+      onShowSignup: () => this.setState({ mode: 'signup', error: '' }),
+      heading: isSignup ? 'Create your account' : 'Welcome back',
+      subheading: isSignup ? 'Save products, track prices, and get alerts.' : 'Log in to see your wishlist and price alerts.',
+      name, email, password,
+      onNameChange: this.onNameChange, onEmailChange: this.onEmailChange, onPasswordChange: this.onPasswordChange,
+      hasError: !!error, errorText: error,
+      submitLabel: isSignup ? 'Create account' : 'Log in',
+      onSubmit: this.onSubmit,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

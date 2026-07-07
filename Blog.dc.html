@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>{{ pageTitle }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#fff}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#fff;min-height:100vh">
+  <dc-import name="Header" active-page="blog" hint-size="100%,72px"></dc-import>
+
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+    <section style="background:linear-gradient(180deg,#EEF0FB,#fff);padding:44px 24px">
+      <div style="max-width:1280px;margin:0 auto">
+        <h1 style="font-size:28px;font-weight:800;color:#1E1B4B;margin:0 0 8px">Buying Guides &amp; Blog</h1>
+        <p style="font-size:14px;color:#5C5A7D;margin:0">Practical comparisons and shopping guides for India &amp; UAE.</p>
+      </div>
+    </section>
+    <div style="max-width:1280px;margin:0 auto;padding:36px 24px 64px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+        <sc-for list="{{ posts }}" as="p" hint-placeholder-count="10">
+          <a href="{{ p.href }}" style="text-decoration:none;background:#fff;border:1px solid #ECEBF5;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:130px;overflow:hidden"><img src="{{ p.imageUrl }}" alt="{{ p.title }}" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:11px;font-weight:800;color:#4338CA;background:#EEF0FB;padding:3px 8px;border-radius:6px;align-self:flex-start">{{ p.category }}</span>
+              <span style="font-size:15.5px;font-weight:800;color:#1E1B4B;line-height:1.35">{{ p.title }}</span>
+              <span style="font-size:12.5px;color:#8B88A3;line-height:1.6">{{ p.excerpt }}</span>
+              <span style="font-size:11.5px;color:#B0AECB;margin-top:4px">{{ p.readTime }} min read</span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:760px;margin:0 auto;padding:36px 24px 64px">
+      <div style="font-size:12.5px;color:#8B88A3;font-weight:600;margin-bottom:14px"><a href="Blog.dc.html" style="color:#8B88A3;text-decoration:none">Blog</a> / {{ post.category }}</div>
+      <span style="font-size:11.5px;font-weight:800;color:#4338CA;background:#EEF0FB;padding:4px 10px;border-radius:6px">{{ post.category }}</span>
+      <h1 style="font-size:30px;font-weight:800;color:#1E1B4B;margin:14px 0 10px;line-height:1.3">{{ post.title }}</h1>
+      <span style="font-size:12.5px;color:#8B88A3">{{ post.readTime }} min read</span>
+      <div style="height:220px;border-radius:16px;overflow:hidden;margin:22px 0"><img src="{{ post.imageUrl }}" alt="{{ post.title }}" style="width:100%;height:100%;object-fit:cover;display:block" /></div>
+      <div style="font-size:15px;color:#3E3C5C;line-height:1.85;display:flex;flex-direction:column;gap:16px">
+        <sc-for list="{{ post.paragraphs }}" as="para" hint-placeholder-count="4">
+          <p style="margin:0">{{ para }}</p>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:44px">
+        <h2 style="font-size:17px;font-weight:800;color:#1E1B4B;margin:0 0 14px">More guides</h2>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ related }}" as="r" hint-placeholder-count="3">
+            <a href="{{ r.href }}" style="text-decoration:none;display:flex;justify-content:space-between;background:#F8F8FC;border:1px solid #ECEBF5;border-radius:10px;padding:13px 16px">
+              <span style="font-size:13.5px;font-weight:700;color:#27253F">{{ r.title }}</span>
+              <span style="font-size:12px;color:#8B88A3">{{ r.readTime }} min</span>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <dc-import name="Footer" hint-size="100%,300px"></dc-import>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const BODY = {
+  b1: ['Inverter compressors modulate speed instead of switching on/off, which is why a 5-star inverter AC usually costs 15-20% more upfront but recovers that gap in 2-3 summers of electricity bills.', 'Room size matters more than the star rating alone — an undersized unit running constantly at full load wastes more power than a right-sized 3-star unit. Match tonnage to floor area first, star rating second.', 'Always check what the listed price excludes: standard installation is often bundled, but stabilizers, copper piping beyond 3 metres, and wall drilling frequently show up as extras at checkout.'],
+  b2: ['We tracked identical listings across both marketplaces for 90 days. Neither platform is consistently cheaper — the winner flips by category, and often by week, as each runs its own promotional calendar.', 'Electronics and large appliances tend to see deeper discounts during platform-specific sale events, while daily essentials and fashion basics stay closer to list price on both.', 'The only reliable way to know who is cheaper for a specific product, today, is to compare live — which is exactly what a price comparison search does.'],
+  b3: ['Budget does not mean low quality — several mass-market skincare and makeup lines reformulate the same actives found in premium products at a fraction of the price.', 'Sunscreen, a gentle cleanser and a basic moisturizer are the three products worth prioritizing at any price point; everything else is more forgiving to buy cheap.', 'Coupon stacking is common in this category — a store coupon plus a bank card offer can bring an already-discounted product down significantly further.'],
+  b4: ['At this price band, camera and battery life vary more between models than raw processor benchmarks do — prioritize real-world reviews over spec sheets.', 'Resale value differs sharply by brand ecosystem; some brands hold 40-50% of value after a year, others closer to 25%.', 'This is also the price band most frequently discounted around festival sales — patience can save a meaningful percentage if you are not in a rush.'],
+  b5: ['For most students, an 8-10 hour real battery life and sub-1.5kg weight matter more day-to-day than an extra CPU tier.', 'Education discounts and student-ID verification programs from manufacturers are worth checking before comparing retailer prices.', 'Build quality is the most common complaint in reviews for budget laptops used daily on campus — hinge durability especially.'],
+  b6: ['Delivery speed varies dramatically by emirate — Dubai and Abu Dhabi core areas get same/next-day delivery from most stores, while other emirates can take 3-5 days.', 'Return policies range from 7 to 30 days across UAE retailers, and electronics are frequently excluded or restocking-fee-bound — always check before buying.', 'VAT is included in almost all displayed prices in the UAE, but delivery and installation fees are quoted separately more often than in India.'],
+  b7: ['Noon\u2019s own-brand and flash-sale inventory tends to undercut Amazon UAE on small electronics and home goods, while Amazon frequently wins on branded international electronics due to broader stock.', 'Delivery speed is close to a tie in Dubai; outside major cities Amazon UAE\u2019s logistics network currently has an edge.', 'Return experience is the biggest differentiator reviewers mention — compare policies per category rather than assuming one platform is universally better.'],
+  b8: ['The oldest trick is inflating the "original price" (MRP) right before a sale so the displayed discount looks larger than it is.', 'A 90-day price history instantly exposes this — if the "original" price was never actually charged in the last three months, the discount is cosmetic.', 'A genuine discount shows a price that sat stable for a while, then dropped below its own historical average — not just below an inflated label.'],
+  b9: ['Major India sale events (year-end, festival season, and end-of-quarter clearances) consistently produce the deepest electronics discounts of the year.', 'New phone and laptop launches also push previous-generation models down sharply within 4-6 weeks — worth waiting for if you don\u2019t need the newest model.', 'Price history tracking is the only way to confirm a "limited time" sale price is actually lower than what the product sold for last month.'],
+  b10: ['Instant discounts at checkout reduce your bill immediately; cashback is credited later and is easier to track against a specific purchase.', 'No-cost EMI can look attractive but sometimes replaces a discount you would have gotten by paying in full — compare the effective price both ways.', 'Card offers are typically store-specific and rotate monthly, so the same card can be worth more on one platform than another in a given week.'],
+};
+
+class Component extends DCLogic {
+  state = { data: null };
+  async componentDidMount() {
+    const data = await import('./data.js');
+    this.setState({ data });
+  }
+
+  renderVals() {
+    const { data } = this.state;
+    if (!data) return { isList: true, isDetail: false, posts: [] };
+    const p = new URLSearchParams(window.location.search);
+    const slug = p.get('slug');
+
+    const withMeta = (bp, i) => ({ ...bp, bg: `linear-gradient(135deg, hsl(${(i * 47) % 360},58%,54%), hsl(${(i * 47 + 30) % 360},55%,42%))`, imageUrl: `https://picsum.photos/seed/blog-${bp.id}/500/300`, href: `Blog.dc.html?slug=${bp.slug}` });
+    const posts = data.BLOG_POSTS.map(withMeta);
+
+    if (!slug) {
+      return { isList: true, isDetail: false, pageTitle: 'Buying Guides & Blog — PriceRadar', posts, post: null, related: [] };
+    }
+    const found = data.BLOG_POSTS.find(b => b.slug === slug);
+    if (!found) return { isList: true, isDetail: false, pageTitle: 'Blog — PriceRadar', posts, post: null, related: [] };
+    const idx = data.BLOG_POSTS.indexOf(found);
+    const post = { ...withMeta(found, idx), paragraphs: BODY[found.id] || [found.excerpt] };
+    const related = data.BLOG_POSTS.filter(b => b.id !== found.id).slice(0, 3).map(withMeta);
+
+    return { isList: false, isDetail: true, pageTitle: `${found.title} — PriceRadar`, posts: [], post, related };
+  }
+}
+
+</script>
+</body>
+</html>

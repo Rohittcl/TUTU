@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<svg viewBox="0 0 24 24" width="{{ size }}" height="{{ size }}" fill="{{ fill }}" stroke="{{ color }}" stroke-width="{{ strokeWidth }}" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex:none">
+  <path d="{{ path }}"></path>
+  <sc-if value="{{ hasCircle }}" hint-placeholder-val="{{ false }}">
+    <circle cx="{{ circle.cx }}" cy="{{ circle.cy }}" r="{{ circle.r }}"></circle>
+  </sc-if>
+</svg>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:24,&quot;height&quot;:24},&quot;iconName&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;search&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;search&quot;,&quot;phone&quot;,&quot;laptop&quot;,&quot;snow&quot;,&quot;sparkle&quot;,&quot;shoe&quot;,&quot;watch&quot;,&quot;basket&quot;,&quot;headphone&quot;,&quot;washer&quot;,&quot;dumbbell&quot;,&quot;shirt&quot;,&quot;sofa&quot;,&quot;car&quot;,&quot;baby&quot;,&quot;heart&quot;,&quot;heart-filled&quot;,&quot;bell&quot;,&quot;user&quot;,&quot;menu&quot;,&quot;star&quot;,&quot;tag&quot;,&quot;bank&quot;,&quot;truck&quot;,&quot;shield&quot;,&quot;check&quot;,&quot;x&quot;,&quot;chevron-down&quot;,&quot;chevron-right&quot;,&quot;chevron-up&quot;,&quot;arrow-right&quot;,&quot;filter&quot;,&quot;grid&quot;,&quot;list&quot;,&quot;plus&quot;,&quot;minus&quot;,&quot;trash&quot;,&quot;edit&quot;,&quot;upload&quot;,&quot;trending&quot;,&quot;clock&quot;,&quot;compare&quot;,&quot;cart&quot;,&quot;mail&quot;,&quot;whatsapp&quot;,&quot;telegram&quot;,&quot;dashboard&quot;,&quot;logout&quot;,&quot;globe&quot;,&quot;facebook&quot;,&quot;instagram&quot;,&quot;twitter&quot;,&quot;linkedin&quot;,&quot;youtube&quot;]},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:20,&quot;tsType&quot;:&quot;number&quot;},&quot;color&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;currentColor&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const PATHS = {
+  search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.3-4.3',
+  phone: 'M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM11 18h2',
+  laptop: 'M4 5h16v10H4zM2 19h20M9 19l1-2h4l1 2',
+  snow: 'M12 2v20M4.5 6l15 12M19.5 6l-15 12M2 12h20',
+  sparkle: 'M12 3l1.8 4.9L19 9.5l-5.2 1.6L12 16l-1.8-4.9L5 9.5l5.2-1.6z',
+  shoe: 'M3 18v-3.5c0-1 .6-2 1.6-2.4L11 9l4 2h4a2 2 0 0 1 2 2v5z',
+  watch: 'M9 6h6v3H9zM9 15h6v3H9z',
+  basket: 'M4 9h16l-1.5 10a2 2 0 0 1-2 1.8H7.5a2 2 0 0 1-2-1.8zM4 9l3-5h10l3 5M9 13v3M15 13v3',
+  headphone: 'M4 14v-2a8 8 0 0 1 16 0v2M4 14a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1v-6zM20 14a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1v-6z',
+  washer: 'M4 3h16v18H4zM9 3v2M15 3v2',
+  dumbbell: 'M6 8v8M4 10v4M2 11v2M18 8v8M20 10v4M22 11v2M6 12h12',
+  shirt: 'M8 3 3 7l3 3 2-1.5V21h8V8.5L18 10l3-3-5-4-2 2h-4z',
+  sofa: 'M4 12V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4M3 12h18v6H3zM5 18v2M19 18v2',
+  car: 'M4 16V11l2-5h12l2 5v5M2 16h20M6 16v3M18 16v3',
+  baby: 'M12 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM6 21c0-4 3-7 6-7s6 3 6 7',
+  heart: 'M12 21s-7.5-4.7-10-9.3C.4 8.4 2 5 5.4 5 8 5 10 6.6 12 9c2-2.4 4-4 6.6-4C22 5 23.6 8.4 22 11.7 19.5 16.3 12 21 12 21z',
+  'heart-filled': 'M12 21s-7.5-4.7-10-9.3C.4 8.4 2 5 5.4 5 8 5 10 6.6 12 9c2-2.4 4-4 6.6-4C22 5 23.6 8.4 22 11.7 19.5 16.3 12 21 12 21z',
+  bell: 'M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3zM10 20a2 2 0 0 0 4 0',
+  user: 'M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM4 21c1-4.5 4.5-7 8-7s7 2.5 8 7',
+  menu: 'M3 6h18M3 12h18M3 18h18',
+  star: 'M12 2.5l3 6.3 6.8.8-5 4.8 1.3 6.8L12 17.9 5.9 21.2l1.3-6.8-5-4.8 6.8-.8z',
+  tag: 'M20 12l-8 8-9-9V4h7zM6.5 6.5h.01',
+  bank: 'M3 10l9-6 9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 21h18',
+  truck: 'M3 6h11v10H3zM14 10h4l3 3v3h-7zM6.5 20a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6zM17.5 20a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z',
+  shield: 'M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z',
+  check: 'M4 12l5 5L20 6',
+  x: 'M6 6l12 12M18 6L6 18',
+  'chevron-down': 'M6 9l6 6 6-6',
+  'chevron-right': 'M9 6l6 6-6 6',
+  'arrow-right': 'M4 12h16M14 6l6 6-6 6',
+  filter: 'M4 5h16M7 12h10M10 19h4',
+  grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+  plus: 'M12 5v14M5 12h14',
+  minus: 'M5 12h14',
+  trash: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',
+  edit: 'M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17z',
+  upload: 'M12 16V4M7 9l5-5 5 5M4 20h16',
+  trending: 'M3 17l6-6 4 4 8-8M15 7h6v6',
+  clock: 'M12 7v5l3.5 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
+  compare: 'M8 3v18M16 3v18M4 8h4M16 8h4M4 16h4M16 16h4',
+  cart: 'M3 4h2l2.5 12.5a2 2 0 0 0 2 1.5h7a2 2 0 0 0 2-1.6L21 8H6M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM18 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
+  mail: 'M4 5h16v14H4zM4 6l8 7 8-7',
+  whatsapp: 'M7 17l-3 1 1-3a7.5 7.5 0 1 1 2 2zM9 9c0 3 3 6 6 6',
+  telegram: 'M3 11.5L21 4l-3.5 17-6-4.5-3 3-.5-5z',
+  dashboard: 'M4 4h7v7H4zM13 4h7v4h-7zM13 11h7v9h-7zM4 14h7v6H4z',
+  logout: 'M9 4H5v16h4M14 8l4 4-4 4M18 12H9',
+  globe: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3a13 13 0 0 1 0 18 13 13 0 0 1 0-18z',
+  facebook: 'M14 9h3V6h-3a3 3 0 0 0-3 3v2H9v3h2v6h3v-6h3l1-3h-4v-2a1 1 0 0 1 1-1z',
+  instagram: 'M4 4h16v16H4zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM17 7h.01',
+  twitter: 'M22 5.5c-.7.3-1.4.6-2.2.7a3.8 3.8 0 0 0 1.7-2.1 7.6 7.6 0 0 1-2.4.9 3.8 3.8 0 0 0-6.5 3.5A10.8 10.8 0 0 1 4.6 4.6a3.8 3.8 0 0 0 1.2 5.1c-.6 0-1.2-.2-1.7-.5v.05a3.8 3.8 0 0 0 3 3.7 3.8 3.8 0 0 1-1.7.07 3.8 3.8 0 0 0 3.5 2.6A7.6 7.6 0 0 1 3 17a10.8 10.8 0 0 0 5.8 1.7c7 0 10.8-5.8 10.8-10.8v-.5c.7-.5 1.3-1.2 1.8-1.9z',
+  linkedin: 'M4 4h16v16H4zM8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 13v4',
+  youtube: 'M3 8a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zM10 9v6l5-3z',
+  'chevron-up': 'M6 15l6-6 6 6',
+};
+
+class Component extends DCLogic {
+  renderVals() {
+    const name = this.props.iconName || 'search';
+    const filled = name === 'heart-filled';
+    return {
+      path: PATHS[name] || PATHS.search,
+      size: this.props.size || 20,
+      color: this.props.color || 'currentColor',
+      fill: filled ? (this.props.color || 'currentColor') : 'none',
+      strokeWidth: this.props.strokeWidth || 1.8,
+      hasCircle: false,
+      circle: { cx: 0, cy: 0, r: 0 },
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>About PriceRadar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>body{margin:0;background:#fff}</style>
+</helmet>
+
+<div style="font-family:'Manrope',sans-serif;background:#fff;min-height:100vh">
+  <dc-import name="Header" active-page="" hint-size="100%,72px"></dc-import>
+
+  <div style="max-width:920px;margin:0 auto;padding:48px 24px 72px;display:flex;flex-direction:column;gap:56px">
+
+    <section id="about" data-screen-label="About">
+      <span style="font-size:12px;font-weight:800;color:#4338CA;letter-spacing:0.04em;text-transform:uppercase">Company</span>
+      <h1 style="font-size:26px;font-weight:800;color:#1E1B4B;margin:10px 0 14px">About PriceRadar</h1>
+      <p style="font-size:14.5px;color:#5C5A7D;line-height:1.8;margin:0 0 12px">PriceRadar helps shoppers in India and the UAE compare prices, coupons and delivery terms across every major store before they buy — so the sticker price is never the whole story.</p>
+      <p style="font-size:14.5px;color:#5C5A7D;line-height:1.8;margin:0">We track price history transparently, surface real bank and coupon offers, and never hide which listings are sponsored.</p>
+    </section>
+
+    <section id="contact" data-screen-label="Contact">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 16px">Contact us</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+        <input type="text" placeholder="Your name" value="{{ contactName }}" onChange="{{ onContactName }}" style="border:1px solid #DCDBF0;border-radius:10px;padding:11px 14px;font-size:13.5px;outline:none" />
+        <input type="email" placeholder="Your email" value="{{ contactEmail }}" onChange="{{ onContactEmail }}" style="border:1px solid #DCDBF0;border-radius:10px;padding:11px 14px;font-size:13.5px;outline:none" />
+      </div>
+      <textarea placeholder="How can we help?" value="{{ contactMessage }}" onChange="{{ onContactMessage }}" rows="4" style="width:100%;box-sizing:border-box;border:1px solid #DCDBF0;border-radius:10px;padding:11px 14px;font-size:13.5px;outline:none;font-family:'Manrope',sans-serif;resize:vertical"></textarea>
+      <button onClick="{{ onContactSubmit }}" style="margin-top:12px;background:#4338CA;color:#fff;border:none;border-radius:10px;padding:11px 22px;font:800 13.5px 'Manrope',sans-serif;cursor:pointer">{{ contactButtonLabel }}</button>
+    </section>
+
+    <section id="careers" data-screen-label="Careers">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 10px">Careers</h2>
+      <p style="font-size:14px;color:#5C5A7D;line-height:1.7;margin:0">We're not actively hiring right now — check back soon, or reach out via the contact form above.</p>
+    </section>
+
+    <section id="partner" data-screen-label="Partner">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 10px">Partner with us</h2>
+      <p style="font-size:14px;color:#5C5A7D;line-height:1.7;margin:0 0 14px">Retailers and affiliate networks can integrate a product feed, API, or manual catalog with PriceRadar.</p>
+      <a href="mailto:partners@priceradar.example" style="font-size:13.5px;font-weight:700;color:#4338CA;text-decoration:none">partners@priceradar.example →</a>
+    </section>
+
+    <section id="submit-store" data-screen-label="Submit a store">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 10px">Submit a store</h2>
+      <div style="display:flex;gap:10px">
+        <input type="text" placeholder="Store name" value="{{ storeName }}" onChange="{{ onStoreName }}" style="flex:1;border:1px solid #DCDBF0;border-radius:10px;padding:11px 14px;font-size:13.5px;outline:none" />
+        <button onClick="{{ onStoreSubmit }}" style="background:#1E1B4B;color:#fff;border:none;border-radius:10px;padding:11px 20px;font:800 13px 'Manrope',sans-serif;cursor:pointer">{{ storeButtonLabel }}</button>
+      </div>
+    </section>
+
+    <section id="privacy" data-screen-label="Privacy">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 12px">Privacy policy</h2>
+      <p style="font-size:13.5px;color:#5C5A7D;line-height:1.8;margin:0 0 10px">We collect the minimum data needed to run price alerts and your wishlist: your email, saved products, and target prices. We never sell personal data to third parties.</p>
+      <p style="font-size:13.5px;color:#5C5A7D;line-height:1.8;margin:0">Store price data shown on PriceRadar is aggregated from public listings, official APIs, and approved partner feeds.</p>
+    </section>
+
+    <section id="terms" data-screen-label="Terms">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 12px">Terms &amp; conditions</h2>
+      <p style="font-size:13.5px;color:#5C5A7D;line-height:1.8;margin:0 0 10px">PriceRadar is a price comparison service. We do not sell products directly — purchases happen on the retailer's own site, subject to their terms.</p>
+      <p style="font-size:13.5px;color:#5C5A7D;line-height:1.8;margin:0">Prices, discounts and availability shown are indicative and refreshed periodically; always confirm the final price on the retailer's checkout page.</p>
+    </section>
+
+    <section id="affiliate" data-screen-label="Affiliate">
+      <h2 style="font-size:20px;font-weight:800;color:#1E1B4B;margin:0 0 12px">Affiliate disclosure</h2>
+      <p style="font-size:13.5px;color:#5C5A7D;line-height:1.8;margin:0">Some links on PriceRadar are affiliate links. If you make a purchase through them, we may earn a commission at no extra cost to you. This never affects how we rank or display prices — the lowest verified price is always shown first.</p>
+    </section>
+  </div>
+
+  <dc-import name="Footer" hint-size="100%,300px"></dc-import>
+</div>
+<template id="__bundler_thumbnail"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#4338CA"/><text x="50" y="58" font-size="34" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="800">PR</text></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { contactName: '', contactEmail: '', contactMessage: '', contactSent: false, storeName: '', storeSent: false };
+
+  renderVals() {
+    const s = this.state;
+    return {
+      contactName: s.contactName, contactEmail: s.contactEmail, contactMessage: s.contactMessage,
+      onContactName: (e) => this.setState({ contactName: e.target.value }),
+      onContactEmail: (e) => this.setState({ contactEmail: e.target.value }),
+      onContactMessage: (e) => this.setState({ contactMessage: e.target.value }),
+      onContactSubmit: () => this.setState({ contactSent: true, contactMessage: '' }),
+      contactButtonLabel: s.contactSent ? 'Sent ✓' : 'Send message',
+      storeName: s.storeName, onStoreName: (e) => this.setState({ storeName: e.target.value }),
+      onStoreSubmit: () => this.setState({ storeSent: true, storeName: '' }),
+      storeButtonLabel: s.storeSent ? 'Submitted ✓' : 'Submit',
+    };
+  }
+}
+
+</script>
+</body>
+</html>

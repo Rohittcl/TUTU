@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<footer style="background:#181633;font-family:'Manrope',sans-serif;color:#C7C5E0;margin-top:64px">
+  <div style="max-width:1280px;margin:0 auto;padding:56px 24px 28px;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:32px">
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#4338CA,#6366F1)"></div>
+        <span style="font-size:17px;font-weight:800;color:#fff">PriceRadar</span>
+      </div>
+      <p style="font-size:13px;line-height:1.7;color:#9997C2;max-width:260px;margin:0 0 16px">Compare prices across India &amp; UAE's top stores before you buy. Real-time price tracking, history, and alerts.</p>
+      <div style="display:flex;gap:10px">
+        <sc-for list="{{ socials }}" as="soc" hint-placeholder-count="4">
+          <a href="{{ soc.href }}" style="width:32px;height:32px;border-radius:8px;background:#262351;display:flex;align-items:center;justify-content:center;text-decoration:none">
+            <dc-import name="Icon" icon-name="{{ soc.icon }}" size="{{ 15 }}" color="{{ '#C7C5E0' }}" hint-size="15,15"></dc-import>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12.5px;font-weight:800;color:#fff;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:14px">Company</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="Company.dc.html#about" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">About us</a>
+        <a href="Company.dc.html#contact" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Contact us</a>
+        <a href="Company.dc.html#careers" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Careers</a>
+        <a href="Company.dc.html#partner" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Partner with us</a>
+        <a href="Company.dc.html#submit-store" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Submit a store</a>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12.5px;font-weight:800;color:#fff;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:14px">Explore</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="Deals.dc.html" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Today's deals</a>
+        <a href="Category.dc.html?id=mobiles" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Mobiles</a>
+        <a href="Category.dc.html?id=laptops" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Laptops</a>
+        <a href="Blog.dc.html" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Buying guides</a>
+        <a href="Wishlist.dc.html" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Price alerts</a>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12.5px;font-weight:800;color:#fff;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:14px">Legal</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="Company.dc.html#privacy" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Privacy policy</a>
+        <a href="Company.dc.html#terms" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Terms &amp; conditions</a>
+        <a href="Company.dc.html#affiliate" style="color:#B4B2D6;text-decoration:none;font-size:13.5px">Affiliate disclosure</a>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12.5px;font-weight:800;color:#fff;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:14px">Get price-drop news</div>
+      <p style="font-size:13px;color:#9997C2;margin:0 0 12px">Weekly picks on the best verified deals.</p>
+      <div style="display:flex;gap:8px">
+        <input type="email" placeholder="you@email.com" value="{{ newsletterEmail }}" onChange="{{ onNewsletterChange }}" style="flex:1;min-width:0;border:1px solid #37345E;background:#211E45;border-radius:8px;padding:9px 12px;font-size:13px;color:#fff;outline:none" />
+        <button onClick="{{ onNewsletterSubmit }}" style="background:#4338CA;color:#fff;border:none;border-radius:8px;padding:9px 14px;font:700 13px 'Manrope',sans-serif;cursor:pointer;flex:none">{{ newsletterButtonLabel }}</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto;padding:20px 24px;border-top:1px solid #2B2856;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <span style="font-size:12.5px;color:#8583AD">© 2026 PriceRadar. All prices are indicative and refreshed periodically from partner stores.</span>
+    <span style="font-size:12.5px;color:#8583AD">Affiliate disclosure: PriceRadar may earn a commission when you buy through our links.</span>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { newsletterEmail: '', submitted: false };
+  onNewsletterChange = (e) => this.setState({ newsletterEmail: e.target.value });
+  onNewsletterSubmit = () => { if (this.state.newsletterEmail) this.setState({ submitted: true, newsletterEmail: '' }); };
+  renderVals() {
+    return {
+      socials: [
+        { icon: 'facebook', href: '#' }, { icon: 'instagram', href: '#' },
+        { icon: 'twitter', href: '#' }, { icon: 'linkedin', href: '#' },
+      ],
+      newsletterEmail: this.state.newsletterEmail,
+      onNewsletterChange: this.onNewsletterChange,
+      onNewsletterSubmit: this.onNewsletterSubmit,
+      newsletterButtonLabel: this.state.submitted ? 'Subscribed ✓' : 'Subscribe',
+    };
+  }
+}
+
+</script>
+</body>
+</html>
